@@ -3,202 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[프로토타입] 서류 검토 페이지</title>
+    <title>관리자 대시보드 - OCR 정보 확인</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <!-- Google Fonts: Noto Sans KR -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Inter', 'Pretendard', sans-serif; }
-        .image-viewer {
-            transition: transform 0.2s ease-out;
+        body { font-family: 'Noto Sans KR', sans-serif; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #aab2bd; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #8892a1; }
+        .submenu { display: none; overflow: hidden; transition: max-height 0.3s ease-in-out; max-height: 0; }
+        .submenu.open { display: block; max-height: 500px; }
+        
+        /* Image viewer styles */
+        #image-viewer {
+            cursor: grab;
+            background-color: #e2e8f0;
         }
-        .modal-backdrop { background-color: rgba(0,0,0,0.5); }
+        #image-viewer.grabbing {
+            cursor: grabbing;
+        }
+        #document-image {
+            transition: transform 0.1s ease-out;
+            pointer-events: none; /* Prevent image from capturing mouse events */
+        }
     </style>
 </head>
-<body class="bg-gray-100 h-screen overflow-hidden">
+<body class="bg-slate-50 text-slate-800">
 
-    <div class="flex h-full">
-        <!-- 좌측: 학생 리스트 -->
-        <aside class="w-1/4 bg-white border-r border-gray-200 flex flex-col">
-            <div class="p-4 border-b">
-                <h2 class="text-lg font-semibold text-gray-800">나의 검토 목록 (3)</h2>
-            </div>
-            <div class="flex-grow overflow-y-auto">
-                <nav class="p-2">
-                    <a href="#" class="flex items-center p-3 rounded-md bg-indigo-50 border-l-4 border-indigo-500">
-                        <div class="flex-grow">
-                            <p class="font-semibold text-indigo-800">김철수</p>
-                            <p class="text-sm text-gray-500">여권 사본</p>
-                        </div>
-                        <i class="fas fa-chevron-right text-gray-400"></i>
-                    </a>
-                    <a href="#" class="flex items-center p-3 rounded-md hover:bg-gray-50">
-                        <div class="flex-grow">
-                            <p class="font-medium text-gray-700">최유리</p>
-                            <p class="text-sm text-gray-500">재학증명서</p>
-                        </div>
-                    </a>
-                    <a href="#" class="flex items-center p-3 rounded-md hover:bg-gray-50">
-                        <div class="flex-grow">
-                            <p class="font-medium text-gray-700">이도현</p>
-                            <p class="text-sm text-gray-500">거주지 입증 서류</p>
-                        </div>
-                    </a>
-                </nav>
-            </div>
-        </aside>
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+   
 
-        <!-- 우측: 서류 검토 워크스페이스 -->
-        <main class="w-3/4 flex h-full">
-            <!-- 고정된 이미지 뷰어 -->
-            <div class="w-1/2 bg-gray-800 flex flex-col items-center justify-center p-4 relative overflow-hidden">
-                <div id="image-container" class="w-full h-full flex items-center justify-center">
-                    <img id="reviewImage" src="https://placehold.co/800x1100/F3F4F6/374151?text=Passport+Sample" alt="제출 서류 이미지" class="max-w-full max-h-full object-contain image-viewer cursor-grab">
-                </div>
-                <div class="absolute bottom-4 left-4 bg-gray-900 bg-opacity-50 rounded-full p-1 flex items-center space-x-2">
-                    <button id="zoomOutBtn" class="p-2 text-white hover:bg-white/20 rounded-full"><i class="fas fa-search-minus"></i></button>
-                    <span id="zoomLevel" class="text-white text-sm font-mono">100%</span>
-                    <button id="zoomInBtn" class="p-2 text-white hover:bg-white/20 rounded-full"><i class="fas fa-search-plus"></i></button>
-                </div>
-                 <a href="https://placehold.co/800x1100/F3F4F6/374151?text=Passport+Sample" target="_blank" class="absolute top-4 right-4 px-3 py-1 text-xs text-white bg-gray-900 bg-opacity-50 rounded-full hover:bg-opacity-75">
-                    원본 확인 <i class="fas fa-external-link-alt ml-1"></i>
-                </a>
-            </div>
-
-            <!-- 정보 및 체크리스트 (구조 변경) -->
-            <div class="w-1/2 bg-white flex flex-col h-full">
-                <!-- 상단 고정 영역 -->
-                <div class="flex-shrink-0">
-                    <div class="p-6 border-b">
-                        <h1 class="text-xl font-bold text-gray-800">김철수 님의 여권 사본 검토</h1>
-                        <p class="text-sm text-gray-500">신청 서비스: 체류기간 연장</p>
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <div class="p-6 border-b">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                    <div class="flex space-x-1 bg-slate-200 rounded-lg p-1 mt-4 sm:mt-0">
+                        <button data-doc-type="passport" class="doc-type-btn flex-1 py-1.5 px-3 text-xs font-semibold rounded-md bg-white text-indigo-700 shadow">여권 정보</button>
+                        <button data-doc-type="residence" class="doc-type-btn flex-1 py-1.5 px-3 text-xs font-semibold rounded-md text-slate-600">거주지 서류</button>
                     </div>
-                    <div class="p-6">
-                        <h3 class="font-semibold text-gray-700 mb-3">고객 상세 정보</h3>
-                        <div class="border border-gray-200 rounded-lg p-4 text-sm">
-                            <div class="grid grid-cols-2 gap-x-4 gap-y-2">
-                                <div><strong class="text-gray-500">한글 이름:</strong> 김철수</div>
-                                <div><strong class="text-gray-500">영문 이름:</strong> Kim Chul Soo</div>
-                                <div><strong class="text-gray-500">생년월일:</strong> 1998-03-15</div>
-                                <div><strong class="text-gray-500">성별:</strong> 남성</div>
-                                <div><strong class="text-gray-500">이메일:</strong> chulsoo.kim@email.com</div>
-                                <div><strong class="text-gray-500">연락처:</strong> +82-10-1234-5678</div>
-                                <div class="col-span-2 border-t mt-2 pt-2"><strong class="text-gray-500">대학교:</strong> 서울대학교 (기계공학부)</div>
-                                <div><strong class="text-gray-500">비자 타입:</strong> D-2 비자</div>
-                                <div><strong class="text-gray-500">여권 번호:</strong> P123456789</div>
+                </div>
+            </div>
+            <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+                <!-- Left Panel: Student List -->
+                <div class="w-full lg:w-1/3 xl:w-1/4 border-r flex flex-col">
+                    <div class="border-b">
+                        <nav id="ocr-tabs" class="flex space-x-4 px-4" aria-label="Tabs">
+                            <button data-status="pending" class="ocr-tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm text-indigo-600 border-indigo-500">대기중</button>
+                            <button data-status="completed" class="ocr-tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300">처리완료</button>
+                        </nav>
+                    </div>
+                    <div id="student-list" class="flex-1 overflow-y-auto">
+                        <!-- Student list items will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Right Panel: Review Area -->
+                <div id="review-panel" class="flex-1 flex flex-col overflow-hidden">
+                    <!-- Image Viewer -->
+                    <div class="w-full h-1/2 lg:h-2/5 p-4">
+                        <div id="image-viewer" class="w-full h-full rounded-lg overflow-hidden relative">
+                            <img id="document-image" src="https://placehold.co/800x500/E2E8F0/A0AEC0?text=Select+Student" class="absolute top-1/2 left-1/2" style="transform: translate(-50%, -50%) scale(1);">
+                        </div>
+                    </div>
+                    <!-- OCR Form -->
+                    <div class="flex-1 p-6 overflow-y-auto">
+                        <div class="max-w-2xl mx-auto">
+                            <h3 id="form-title" class="text-xl font-bold mb-4"></h3>
+                            <div id="ocr-form" class="space-y-4">
+                                <!-- Form fields will be populated here -->
+                            </div>
+                            <div class="mt-6 text-right">
+                                <button id="save-ocr-btn" class="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700">저장</button>
                             </div>
                         </div>
                     </div>
-                </div>
-                
-                <!-- 하단 스크롤 영역 -->
-                <div class="flex-grow overflow-y-auto p-6 border-t">
-                    <div class="space-y-8">
-                        <div>
-                            <h3 class="font-semibold text-gray-700 mb-3">검토 체크리스트</h3>
-                            <div id="checklist" class="space-y-3">
-                                <label class="flex items-center p-3 bg-gray-50 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 checklist-item"><span class="ml-3 text-sm text-gray-700">사진과 실물 얼굴 일치 여부</span></label>
-                                <label class="flex items-center p-3 bg-gray-50 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 checklist-item"><span class="ml-3 text-sm text-gray-700">여권 만료 기간 유효 여부</span></label>
-                                <label class="flex items-center p-3 bg-gray-50 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 checklist-item"><span class="ml-3 text-sm text-gray-700">OCR 정보와 여권 정보 일치 여부</span></label>
-                                <label class="flex items-center p-3 bg-gray-50 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 checklist-item"><span class="ml-3 text-sm text-gray-700">서류 위변조 흔적 없음</span></label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <h3 class="font-semibold text-gray-700 mb-3">검토 메모</h3>
-                            <div>
-                                <textarea rows="4" placeholder="검토 관련 특이사항이나 내부 공유용 메모를 작성하세요." class="w-full rounded-md border-gray-300 shadow-sm text-sm"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 하단 고정 버튼 영역 -->
-                <div class="p-6 border-t bg-white flex-shrink-0 flex items-center justify-end space-x-3">
-                    <button onclick="openCorrectionModal()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700">보완 요청</button>
-                    <button id="approveBtn" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>승인하기</button>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- 보완 요청 모달 -->
-    <div id="correctionModal" class="fixed inset-0 z-10 hidden items-center justify-center">
-        <div class="modal-backdrop absolute inset-0" onclick="closeCorrectionModal()"></div>
-        <div class="bg-white rounded-lg shadow-xl z-20 w-full max-w-lg mx-4">
-            <div class="p-6 border-b"><h2 class="text-xl font-bold text-gray-800">보완 요청 사유 작성</h2></div>
-            <div class="p-6 space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">자주 쓰는 사유 선택</label>
-                    <select class="w-full rounded-md border-gray-300 shadow-sm"><option>사유를 선택하거나 직접 입력하세요</option><option>사진 화질이 선명하지 않습니다.</option><option>서류의 유효기간이 만료되었습니다.</option></select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">상세 사유 작성 (고객 전달용)</label>
-                    <textarea rows="4" placeholder="예: 여권 번호가 잘 보이지 않습니다. 빛 반사 없이 선명하게 다시 촬영하여 제출해주세요." class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></textarea>
-                </div>
-            </div>
-            <div class="p-4 bg-gray-50 flex justify-end space-x-2">
-                <button onclick="closeCorrectionModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border rounded-md hover:bg-gray-50">취소</button>
-                <button onclick="sendCorrectionRequest()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 border rounded-md hover:bg-red-700">요청 보내기</button>
-            </div>
-        </div>
-    </div>
-
+    <!-- Scripts -->
     <script>
-        const checklistItems = document.querySelectorAll('.checklist-item');
-        const approveBtn = document.getElementById('approveBtn');
-        const correctionModal = document.getElementById('correctionModal');
-        const reviewImage = document.getElementById('reviewImage');
-        const zoomInBtn = document.getElementById('zoomInBtn');
-        const zoomOutBtn = document.getElementById('zoomOutBtn');
-        const zoomLevelSpan = document.getElementById('zoomLevel');
-        
-        let currentScale = 1;
-        const zoomStep = 0.2;
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Navigation Logic ---
+            const navAccordions = document.querySelectorAll('.nav-accordion');
+            navAccordions.forEach(accordion => { /* ... existing code ... */ });
 
-        // 체크리스트 로직
-        function checkApprovalStatus() {
-            const allChecked = Array.from(checklistItems).every(item => item.checked);
-            approveBtn.disabled = !allChecked;
-        }
-        checklistItems.forEach(item => {
-            item.addEventListener('change', checkApprovalStatus);
-        });
+            // --- OCR Page Logic ---
+            const mockStudents = {
+                pending: [
+                    { 
+                        id: 'usr001', name: '김민준', status: '대기중', 
+                        passport: { ocr_status: '성공', img: 'https://placehold.co/800x500/E2E8F0/A0AEC0?text=Passport+Image+1', data: { last_name: 'KIM', first_name: 'MINJUN', passport_no: 'M12345678', dob: '1998-05-15', expiry_date: '2030-10-10', issue_date: '2020-10-11' } },
+                        residence: { ocr_status: '대기', img: 'https://placehold.co/800x1100/E2E8F0/A0AEC0?text=Residence+Doc+1', data: { address: '', address_detail: '' } }
+                    },
+                    { 
+                        id: 'usr002', name: '이서연', status: '대기중', 
+                        passport: { ocr_status: '실패', img: 'https://placehold.co/800x500/E2E8F0/A0AEC0?text=Passport+Image+2', data: { last_name: '', first_name: '', passport_no: '', dob: '', expiry_date: '', issue_date: '' } },
+                        residence: { ocr_status: '성공', img: 'https://placehold.co/800x1100/E2E8F0/A0AEC0?text=Residence+Doc+2', data: { address: '서울특별시 관악구 관악로 1', address_detail: '101동 101호' } }
+                    },
+                ],
+                completed: [
+                    { 
+                        id: 'usr003', name: '박도윤', status: '처리완료', 
+                        passport: { ocr_status: '성공', img: 'https://placehold.co/800x500/E2E8F0/A0AEC0?text=Passport+Image+3', data: { last_name: 'PARK', first_name: 'DOYUN', passport_no: 'M87654321', dob: '1999-11-20', expiry_date: '2029-05-20', issue_date: '2019-05-21' } },
+                        residence: { ocr_status: '성공', img: 'https://placehold.co/800x1100/E2E8F0/A0AEC0?text=Residence+Doc+3', data: { address: '서울특별시 서대문구 연세로 50', address_detail: '국제학사 202호' } }
+                    }
+                ]
+            };
+            
+            let activeStudentId = null;
+            let activeStatusTab = 'pending';
+            let activeDocType = 'passport';
 
-        // 이미지 줌 로직
-        function updateZoom() {
-            reviewImage.style.transform = `scale(${currentScale})`;
-            zoomLevelSpan.textContent = `${Math.round(currentScale * 100)}%`;
-        }
-        zoomInBtn.addEventListener('click', () => {
-            currentScale += zoomStep;
-            updateZoom();
-        });
-        zoomOutBtn.addEventListener('click', () => {
-            if (currentScale > zoomStep) {
-                currentScale -= zoomStep;
-                updateZoom();
+            const studentListEl = document.getElementById('student-list');
+            const ocrFormEl = document.getElementById('ocr-form');
+            const ocrTabs = document.querySelectorAll('.ocr-tab-btn');
+            const docTypeBtns = document.querySelectorAll('.doc-type-btn');
+            
+            function renderStudentList() {
+                studentListEl.innerHTML = '';
+                const studentsToList = mockStudents[activeStatusTab].filter(student => {
+                    const doc = student[activeDocType];
+                    return doc && (doc.ocr_status === '성공' || doc.ocr_status === '실패' || doc.ocr_status === '대기');
+                });
+
+                studentsToList.forEach(student => {
+                    const isActive = student.id === activeStudentId;
+                    const activeClasses = isActive ? 'bg-indigo-100 border-indigo-500' : 'border-transparent';
+                    const docStatus = student[activeDocType].ocr_status;
+                    studentListEl.innerHTML += `
+                        <div class="student-item p-4 border-l-4 ${activeClasses} cursor-pointer hover:bg-slate-100" data-id="${student.id}">
+                            <p class="font-semibold">${student.name}</p>
+                            <p class="text-xs text-slate-500">OCR 상태: ${docStatus}</p>
+                        </div>
+                    `;
+                });
             }
-        });
-        reviewImage.parentElement.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            if (e.deltaY < 0) { // 휠 위로
-                currentScale += zoomStep;
-            } else { // 휠 아래로
-                if (currentScale > zoomStep) {
-                    currentScale -= zoomStep;
+
+            function renderReviewPanel(studentId) {
+                const student = mockStudents.pending.find(s => s.id === studentId) || mockStudents.completed.find(s => s.id === studentId);
+                const formTitleEl = document.getElementById('form-title');
+
+                if (!student) {
+                    ocrFormEl.innerHTML = '<p class="text-slate-500">학생을 선택해주세요.</p>';
+                    formTitleEl.textContent = '정보';
+                    document.getElementById('document-image').src = 'https://placehold.co/800x500/E2E8F0/A0AEC0?text=Select+Student';
+                    return;
+                }
+                
+                const docObject = student[activeDocType];
+                document.getElementById('document-image').src = docObject.img;
+
+                if (activeDocType === 'passport') {
+                    formTitleEl.textContent = '여권 정보';
+                    ocrFormEl.innerHTML = `
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label class="font-semibold text-sm">성 (Last Name)</label><input type="text" value="${docObject.data.last_name}" class="mt-1 w-full p-2 border rounded-md"></div>
+                            <div><label class="font-semibold text-sm">이름 (First Name)</label><input type="text" value="${docObject.data.first_name}" class="mt-1 w-full p-2 border rounded-md"></div>
+                            <div><label class="font-semibold text-sm">여권번호</label><input type="text" value="${docObject.data.passport_no}" class="mt-1 w-full p-2 border rounded-md"></div>
+                            <div><label class="font-semibold text-sm">생년월일</label><input type="date" value="${docObject.data.dob}" class="mt-1 w-full p-2 border rounded-md"></div>
+                            <div><label class="font-semibold text-sm">여권만료일</label><input type="date" value="${docObject.data.expiry_date}" class="mt-1 w-full p-2 border rounded-md"></div>
+                            <div><label class="font-semibold text-sm">여권 발급일</label><input type="date" value="${docObject.data.issue_date}" class="mt-1 w-full p-2 border rounded-md"></div>
+                        </div>
+                    `;
+                } else if (activeDocType === 'residence') {
+                    formTitleEl.textContent = '거주지 정보';
+                    ocrFormEl.innerHTML = `
+                         <div><label class="font-semibold text-sm">주소</label><input type="text" value="${docObject.data.address}" class="mt-1 w-full p-2 border rounded-md"></div>
+                         
+                    `;
                 }
             }
-            updateZoom();
-        });
-        
-        // 보완 요청 모달 로직
-        function openCorrectionModal() { correctionModal.classList.remove('hidden'); correctionModal.classList.add('flex'); }
-        function closeCorrectionModal() { correctionModal.classList.add('hidden'); correctionModal.classList.remove('flex'); }
-        function sendCorrectionRequest() { alert('보완 요청을 성공적으로 보냈습니다.'); closeCorrectionModal(); }
 
-        // 초기화
-        checkApprovalStatus();
+            // --- Event Listeners ---
+            studentListEl.addEventListener('click', (e) => {
+                const item = e.target.closest('.student-item');
+                if (item) {
+                    activeStudentId = item.dataset.id;
+                    renderStudentList();
+                    renderReviewPanel(activeStudentId);
+                }
+            });
+
+            ocrTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    ocrTabs.forEach(t => {
+                        t.classList.remove('text-indigo-600', 'border-indigo-500');
+                        t.classList.add('text-slate-500', 'border-transparent');
+                    });
+                    tab.classList.add('text-indigo-600', 'border-indigo-500');
+                    activeStatusTab = tab.dataset.status;
+                    activeStudentId = null; // Reset selection
+                    renderStudentList();
+                    renderReviewPanel(null);
+                });
+            });
+
+            docTypeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    docTypeBtns.forEach(b => {
+                        b.classList.remove('bg-white', 'text-indigo-700', 'shadow');
+                        b.classList.add('text-slate-600');
+                    });
+                    btn.classList.add('bg-white', 'text-indigo-700', 'shadow');
+                    btn.classList.remove('text-slate-600');
+                    activeDocType = btn.dataset.docType;
+                    activeStudentId = null;
+                    renderStudentList();
+                    renderReviewPanel(null);
+                });
+            });
+
+            document.getElementById('save-ocr-btn').addEventListener('click', () => {
+                if(activeStudentId) {
+                    alert(`${activeStudentId}의 정보가 저장되었습니다.`);
+                } else {
+                    alert('저장할 학생을 선택해주세요.');
+                }
+            });
+
+            // --- Image Viewer Pan & Zoom Logic ---
+            const viewer = document.getElementById('image-viewer');
+            const image = document.getElementById('document-image');
+            let isDragging = false;
+            let startPos = { x: 0, y: 0 };
+            let translate = { x: 0, y: 0 };
+            let scale = 1;
+
+            viewer.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                viewer.classList.add('grabbing');
+                startPos.x = e.clientX - translate.x;
+                startPos.y = e.clientY - translate.y;
+            });
+
+            viewer.addEventListener('mouseup', () => {
+                isDragging = false;
+                viewer.classList.remove('grabbing');
+            });
+            
+            viewer.addEventListener('mouseleave', () => {
+                isDragging = false;
+                viewer.classList.remove('grabbing');
+            });
+
+            viewer.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                translate.x = e.clientX - startPos.x;
+                translate.y = e.clientY - startPos.y;
+                image.style.transform = `translate(calc(-50% + ${translate.x}px), calc(-50% + ${translate.y}px)) scale(${scale})`;
+            });
+
+            viewer.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const scaleAmount = 0.1;
+                scale += e.deltaY > 0 ? -scaleAmount : scaleAmount;
+                scale = Math.max(0.5, Math.min(scale, 3)); // Min 0.5x, Max 3x zoom
+                image.style.transform = `translate(calc(-50% + ${translate.x}px), calc(-50% + ${translate.y}px)) scale(${scale})`;
+            });
+
+            // --- Initial Render ---
+            renderStudentList();
+            renderReviewPanel(null);
+        });
     </script>
 </body>
 </html>
