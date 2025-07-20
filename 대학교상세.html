@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 대시보드 - 클라이언트 상세</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Noto Sans KR -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #aab2bd; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #8892a1; }
+        .submenu { display: none; overflow: hidden; transition: max-height 0.3s ease-in-out; max-height: 0; }
+        .submenu.open { display: block; max-height: 500px; }
+        .modal-backdrop { transition: opacity 0.3s ease; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 flex-shrink-0 bg-white border-r border-slate-200 flex flex-col">
+            <div class="h-16 flex items-center justify-center border-b border-slate-200">
+                <h1 class="text-xl font-bold text-indigo-600">HADASH</h1>
+            </div>
+            <nav class="flex-1 px-4 py-4 overflow-y-auto">
+                <ul class="space-y-1">
+                    <li>
+                        <a href="main.html" data-page="home" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                            홈
+                        </a>
+                    </li>
+                    <li>
+                        <a href="users.html" data-page="users" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21a6 6 0 00-9-5.197m0 0A5.975 5.975 0 0112 13a5.975 5.975 0 013-1.197M15 21a9 9 0 00-6-6.803"></path></svg>
+                            사용자 관리
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./파일업로드.html" data-page="users" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21a6 6 0 00-9-5.197m0 0A5.975 5.975 0 0112 13a5.975 5.975 0 013-1.197M15 21a9 9 0 00-6-6.803"></path></svg>
+                            파일 업로드
+                        </a>
+                    </li>
+                    <li>
+                        <button type="button" class="nav-accordion flex items-center w-full px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg text-left" aria-controls="submenu-clients">
+                           <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                             <span>클라이언트</span>
+                            <svg class="w-4 h-4 ml-auto transition-transform" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        </button>
+                        <ul id="submenu-clients" class="submenu mt-1 space-y-1 pl-5">
+                            <li><a href="./대학교.html" class="nav-link block px-3 py-2 text-sm rounded-lg">대학교</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <button type="button" class="nav-accordion flex items-center w-full px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg text-left bg-indigo-50 font-semibold" aria-controls="submenu-services">
+                            <svg class="w-5 h-5 mr-3 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            <span class="text-indigo-600">서비스</span>
+                            <svg class="w-4 h-4 ml-auto transition-transform rotate-180" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        </button>
+                        <ul id="submenu-services" class="submenu mt-1 space-y-1 pl-5 open">
+                            <li><a href="./신규외국인등록증.html" class="nav-link block px-3 py-2 text-sm rounded-lg text-indigo-600 font-semibold bg-indigo-50">신규 외국인등록증</a></li>
+                            <li><a href="#" class="nav-link block px-3 py-2 text-sm rounded-lg">체류기간 연장</a></li>
+                            <li><a href="#" class="nav-link block px-3 py-2 text-sm rounded-lg">모바일</a></li>
+                        </ul>
+                    </li>
+                     <li>
+                        <a href="./업무진행.html" data-page="work" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg">
+                           <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9V3m0 9a9 9 0 00-9 9"></path></svg>
+                            업무 관리
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-page="admin" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0 3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            관리자
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-auto p-6 sm:p-8">
+            <a href="./대학교.html" class="mb-6 inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-900">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                클라이언트 목록으로 돌아가기
+            </a>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Left Column -->
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <div id="client-info-panel">
+                             <!-- Client info and contract info will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-lg shadow-sm">
+                        <!-- Tab Headers -->
+                        <div class="border-b border-slate-200">
+                            <nav id="detail-tabs" class="-mb-px flex space-x-6 px-6" aria-label="Tabs">
+                                <button data-tab="condition" class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-indigo-600 border-indigo-500">조건 설정</button>
+                                <button data-tab="schedule" class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300">일정 설정</button>
+                                <button data-tab="history" class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300">히스토리</button>
+                            </nav>
+                        </div>
+                        <!-- Tab Content -->
+                        <div class="p-6">
+                            <div id="tab-content-condition" class="tab-panel space-y-6"></div>
+                            <div id="tab-content-schedule" class="tab-panel hidden space-y-6"></div>
+                            <div id="tab-content-history" class="tab-panel hidden"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- History Edit Modal -->
+    <div id="history-edit-modal" class="fixed inset-0 bg-slate-900 bg-opacity-50 flex items-center justify-center p-4 z-50 hidden modal-backdrop">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-full flex flex-col">
+            <div class="p-6 border-b flex justify-between items-center">
+                <h3 id="history-modal-title" class="text-xl font-bold">히스토리 수정</h3>
+                <button data-close-modal="history-edit-modal" class="text-slate-400 hover:text-slate-600 text-2xl">&times;</button>
+            </div>
+            <div id="history-modal-content" class="p-6 space-y-4 overflow-y-auto"></div>
+            <div class="p-6 border-t flex justify-end gap-2 bg-slate-50 rounded-b-lg">
+                <button data-close-modal="history-edit-modal" class="px-4 py-2 bg-slate-200 rounded-md">취소</button>
+                <button id="history-modal-save-btn" class="px-4 py-2 bg-indigo-600 text-white rounded-md">저장</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Navigation Logic ---
+            const navAccordions = document.querySelectorAll('.nav-accordion');
+            navAccordions.forEach(accordion => {
+                accordion.addEventListener('click', function() {
+                    const submenu = this.nextElementSibling;
+                    const icon = this.querySelector('svg:last-child');
+                    const isOpen = submenu.classList.toggle('open');
+                    icon.classList.toggle('rotate-180', isOpen);
+                });
+            });
+
+            // --- Client Detail Page Logic ---
+            const mockClientData = {
+                'CLIENT-001': {
+                    name: '서울대학교',
+                    department: '국제협력본부',
+                    region: '서울',
+                    contact_person: '김서울',
+                    phone: '02-123-4567',
+                    email: 'seoul@snu.ac.kr',
+                    position: '주임',
+                    memo: '2025년 1학기 신규 계약. 담당자 변경 가능성 있음.',
+                    contract: {
+                        serviceType: '행정',
+                        startDate: '2024-01-01',
+                        endDate: '2025-12-31'
+                    },
+                    history: [
+                        { id: 1, date: '2024-12-15', editor: 'admin01', action: '조건 설정 저장', data: { semesterName: '2025년 1학기', semesterStart: '2025-03-01', semesterEnd: '2025-06-30', schoolDocs: ['재학 증명서'], fee: 150000, memo: '초기 설정' } },
+                        { id: 2, date: '2025-01-20', editor: 'admin02', action: '일정 설정 저장', data: { method: '온라인', appStartDate: '2025-03-01T09:00', appEndDate: '2025-03-15T18:00' } }
+                    ]
+                }
+            };
+
+            const clientInfoPanel = document.getElementById('client-info-panel');
+
+            function populateClientInfo(clientId) {
+                const client = mockClientData[clientId];
+                if (!client) return;
+                
+                clientInfoPanel.innerHTML = `
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold">${client.name}</h3>
+                            <p class="text-md text-slate-500">${client.department}</p>
+                        </div>
+                        <div>
+                            <button id="edit-client-btn" class="text-sm font-medium text-indigo-600 hover:underline">수정</button>
+                            <button id="save-client-btn" class="text-sm font-medium text-indigo-600 hover:underline hidden">저장</button>
+                            <button id="cancel-client-btn" class="text-sm font-medium text-slate-500 hover:underline ml-2 hidden">취소</button>
+                        </div>
+                    </div>
+                    <div id="client-info-view">
+                        <div class="space-y-1 text-sm">
+                            <div class="flex justify-between py-2 border-b border-slate-100"><span class="text-slate-500">지역</span><p class="font-medium text-slate-800 text-right">${client.region}</p></div>
+                            <div class="flex justify-between py-2 border-b border-slate-100"><span class="text-slate-500">담당자</span><p class="font-medium text-slate-800 text-right">${client.contact_person}</p></div>
+                            <div class="flex justify-between py-2 border-b border-slate-100"><span class="text-slate-500">전화 번호</span><p class="font-medium text-slate-800 text-right">${client.phone}</p></div>
+                            <div class="flex justify-between py-2 border-b border-slate-100"><span class="text-slate-500">이메일</span><p class="font-medium text-slate-800 text-right">${client.email}</p></div>
+                            <div class="flex justify-between py-2 border-b border-slate-100"><span class="text-slate-500">직급</span><p class="font-medium text-slate-800 text-right">${client.position}</p></div>
+                        </div>
+                        <div class="mt-6 text-sm">
+                            <h4 class="font-bold mb-2">메모</h4>
+                            <p class="p-3 bg-slate-50 rounded-md">${client.memo}</p>
+                        </div>
+                        <hr class="my-6 border-slate-200">
+                        <div>
+                             <h3 class="text-lg font-bold mb-4">계약 진행</h3>
+                             <div class="space-y-1 text-sm">
+                                <div class="flex justify-between py-2 border-b border-slate-100"><span class="text-slate-500">계약 서비스</span><p class="font-medium text-slate-800 text-right">${client.contract.serviceType}</p></div>
+                                <div class="flex justify-between py-2 border-b border-slate-100"><span class="text-slate-500">계약 기간</span><p class="font-medium text-slate-800 text-right">${client.contract.startDate} ~ ${client.contract.endDate}</p></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="client-info-edit" class="hidden space-y-4 text-sm">
+                        <div><label class="font-semibold">클라이언트 명</label><input type="text" id="edit-name" value="${client.name}" class="mt-1 w-full p-2 border rounded-md"></div>
+                        <div><label class="font-semibold">부처</label><input type="text" id="edit-department" value="${client.department}" class="mt-1 w-full p-2 border rounded-md"></div>
+                        <div><label class="font-semibold">지역</label><input type="text" id="edit-region" value="${client.region}" class="mt-1 w-full p-2 border rounded-md"></div>
+                        <div><label class="font-semibold">담당자</label><input type="text" id="edit-contact_person" value="${client.contact_person}" class="mt-1 w-full p-2 border rounded-md"></div>
+                        <div><label class="font-semibold">전화 번호</label><input type="text" id="edit-phone" value="${client.phone}" class="mt-1 w-full p-2 border rounded-md"></div>
+                        <div><label class="font-semibold">이메일</label><input type="email" id="edit-email" value="${client.email}" class="mt-1 w-full p-2 border rounded-md"></div>
+                        <div><label class="font-semibold">직급</label><input type="text" id="edit-position" value="${client.position}" class="mt-1 w-full p-2 border rounded-md"></div>
+                        <div><label class="font-semibold">메모</label><textarea id="edit-memo" class="mt-1 w-full p-2 border rounded-md" rows="3">${client.memo}</textarea></div>
+                        <hr class="my-4 border-slate-200">
+                        <div>
+                            <h4 class="font-bold text-md mb-2">계약 진행</h4>
+                            <div>
+                                <label class="font-semibold">계약 서비스</label>
+                                <select id="edit-contract-service" class="mt-1 w-full p-2 border rounded-md">
+                                    <option value="행정" ${client.contract.serviceType === '행정' ? 'selected' : ''}>행정</option>
+                                    <option value="모바일" ${client.contract.serviceType === '모바일' ? 'selected' : ''}>모바일</option>
+                                    <option value="기타" ${client.contract.serviceType === '기타' ? 'selected' : ''}>기타</option>
+                                </select>
+                            </div>
+                            <div class="mt-2">
+                                <label class="font-semibold">계약 기간</label>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <input type="date" id="edit-contract-start" value="${client.contract.startDate}" class="w-full p-2 border rounded-md text-slate-500">
+                                    <span class="text-slate-500">~</span>
+                                    <input type="date" id="edit-contract-end" value="${client.contract.endDate}" class="w-full p-2 border rounded-md text-slate-500">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                attachEditButtonListeners(clientId);
+            }
+
+            function attachEditButtonListeners(clientId) {
+                const editBtn = document.getElementById('edit-client-btn');
+                const saveBtn = document.getElementById('save-client-btn');
+                const cancelBtn = document.getElementById('cancel-client-btn');
+                const viewPanel = document.getElementById('client-info-view');
+                const editPanel = document.getElementById('client-info-edit');
+
+                editBtn.addEventListener('click', () => {
+                    viewPanel.classList.add('hidden');
+                    editPanel.classList.remove('hidden');
+                    editBtn.classList.add('hidden');
+                    saveBtn.classList.remove('hidden');
+                    cancelBtn.classList.remove('hidden');
+                });
+
+                cancelBtn.addEventListener('click', () => {
+                    viewPanel.classList.remove('hidden');
+                    editPanel.classList.add('hidden');
+                    editBtn.classList.remove('hidden');
+                    saveBtn.classList.add('hidden');
+                    cancelBtn.classList.add('hidden');
+                });
+
+                saveBtn.addEventListener('click', () => {
+                    mockClientData[clientId].name = document.getElementById('edit-name').value;
+                    mockClientData[clientId].department = document.getElementById('edit-department').value;
+                    mockClientData[clientId].region = document.getElementById('edit-region').value;
+                    mockClientData[clientId].contact_person = document.getElementById('edit-contact_person').value;
+                    mockClientData[clientId].phone = document.getElementById('edit-phone').value;
+                    mockClientData[clientId].email = document.getElementById('edit-email').value;
+                    mockClientData[clientId].position = document.getElementById('edit-position').value;
+                    mockClientData[clientId].memo = document.getElementById('edit-memo').value;
+                    mockClientData[clientId].contract.serviceType = document.getElementById('edit-contract-service').value;
+                    mockClientData[clientId].contract.startDate = document.getElementById('edit-contract-start').value;
+                    mockClientData[clientId].contract.endDate = document.getElementById('edit-contract-end').value;
+                    populateClientInfo(clientId);
+                });
+            }
+
+            function populateTabs(clientId) {
+                // Condition Tab
+                document.getElementById('tab-content-condition').innerHTML = `
+                    <div>
+                        <label class="font-semibold block mb-1">기간 설정</label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input type="text" id="condition-semester-name" placeholder="학기 명 입력 (예: 2025년 1학기)" class="w-full p-2 border rounded-md">
+                            <div class="flex items-center gap-2">
+                                <input type="date" id="condition-semester-start" class="w-full p-2 border rounded-md text-slate-500">
+                                <span class="text-slate-500">~</span>
+                                <input type="date" id="condition-semester-end" class="w-full p-2 border rounded-md text-slate-500">
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-2">학교에서 제출 서류</h4>
+                        <div class="space-y-2 text-sm" id="condition-school-docs">
+                            <label class="flex items-center"><input type="checkbox" value="재학 증명서" class="h-4 w-4 rounded"> <span class="ml-2">재학 증명서</span></label>
+                            <label class="flex items-center"><input type="checkbox" value="기숙사 증명서류" class="h-4 w-4 rounded"> <span class="ml-2">기숙사 증명서류</span></label>
+                            <label class="flex items-center"><input type="checkbox" value="해당 없음" class="h-4 w-4 rounded"> <span class="ml-2">해당 없음</span></label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="font-semibold block mb-1">수수료 (원)</label>
+                        <input type="number" id="condition-fee" placeholder="필수값" class="w-full p-2 border rounded-md" required>
+                    </div>
+                     <div>
+                        <label class="font-semibold block mb-1">메모</label>
+                        <textarea id="condition-memo" class="mt-1 w-full p-2 border rounded-md" rows="3"></textarea>
+                    </div>
+                    <div class="text-right">
+                        <button id="condition-save-btn" class="px-4 py-2 bg-indigo-600 text-white rounded-md disabled:bg-indigo-300" disabled>저장</button>
+                    </div>
+                `;
+
+                // Schedule Tab
+                document.getElementById('tab-content-schedule').innerHTML = `
+                    <div class="flex items-center gap-4"><label class="font-semibold">방식:</label><label class="flex items-center"><input type="radio" name="method" value="온라인" class="h-4 w-4"> <span class="ml-2">온라인</span></label><label class="flex items-center"><input type="radio" name="method" value="오프라인" class="h-4 w-4"> <span class="ml-2">오프라인</span></label></div>
+                    <div>
+                        <label class="font-semibold block mb-1">신청 기간</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="datetime-local" id="app-start-date" class="p-2 border rounded">
+                            <input type="datetime-local" id="app-end-date" class="p-2 border rounded">
+                        </div>
+                    </div>
+                    <div><label class="font-semibold block mb-1">보완 마감일</label><input type="datetime-local" id="revision-deadline" class="w-full p-2 border rounded bg-slate-100"></div>
+                    <div><label class="font-semibold block mb-1">출입국 제출일</label><input type="datetime-local" id="submission-deadline" class="w-full p-2 border rounded bg-slate-100"></div>
+                    <div><label class="font-semibold block mb-1">지문등록 일정</label><input type="datetime-local" placeholder="수동 추가 설정" class="w-full p-2 border rounded"></div>
+                    <div><label class="font-semibold block mb-1">RC 배포 일정</label><input type="datetime-local" placeholder="수동 추가 설정" class="w-full p-2 border rounded"></div>
+                     <div class="text-right">
+                        <button id="schedule-save-btn" class="px-4 py-2 bg-indigo-600 text-white rounded-md">저장</button>
+                    </div>
+                `;
+
+                // History Tab
+                renderHistoryTab(clientId);
+            }
+            
+            function renderHistoryTab(clientId) {
+                const historyContainer = document.getElementById('tab-content-history');
+                const client = mockClientData[clientId];
+                if (!client || !client.history) {
+                    historyContainer.innerHTML = `<p class="text-slate-500">히스토리 내역이 없습니다.</p>`;
+                    return;
+                }
+
+                historyContainer.innerHTML = client.history.map((item) => {
+                    let details = '';
+                    if (item.action.includes('조건')) {
+                        details = `학기: ${item.data.semesterName}, 수수료: ${item.data.fee.toLocaleString()}원`;
+                    } else if (item.action.includes('일정')) {
+                        details = `신청 시작: ${new Date(item.data.appStartDate).toLocaleString()}`;
+                    }
+
+                    return `
+                    <div class="border-b border-slate-200 py-3" data-history-id="${item.id}">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="font-semibold text-sm">${item.action}</p>
+                                <p class="text-xs text-slate-500">${item.date} by ${item.editor}</p>
+                            </div>
+                            <button class="edit-history-btn text-xs font-medium text-indigo-600 hover:underline">수정</button>
+                        </div>
+                        <p class="text-sm mt-1 text-slate-600">${details}</p>
+                    </div>
+                `}).join('');
+            }
+            
+            // --- Initial Population ---
+            const currentClientId = 'CLIENT-001'; // Default for prototype
+            populateClientInfo(currentClientId);
+            populateTabs(currentClientId);
+
+            // --- Tab switching logic ---
+            const tabs = document.querySelectorAll('.tab-btn');
+            const panels = document.querySelectorAll('.tab-panel');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => {
+                        t.classList.remove('text-indigo-600', 'border-indigo-500');
+                        t.classList.add('text-slate-500', 'border-transparent');
+                    });
+                    tab.classList.add('text-indigo-600', 'border-indigo-500');
+                    tab.classList.remove('text-slate-500', 'border-transparent');
+
+                    panels.forEach(p => p.classList.add('hidden'));
+                    document.getElementById(`tab-content-${tab.dataset.tab}`).classList.remove('hidden');
+                });
+            });
+
+            // --- Fee Validation & Save Logic ---
+            const conditionFeeInput = document.getElementById('condition-fee');
+            const conditionSaveBtn = document.getElementById('condition-save-btn');
+            if (conditionFeeInput && conditionSaveBtn) {
+                conditionFeeInput.addEventListener('input', () => {
+                    conditionSaveBtn.disabled = conditionFeeInput.value.trim() === '';
+                });
+                conditionSaveBtn.addEventListener('click', () => {
+                    const checkedDocs = Array.from(document.querySelectorAll('#condition-school-docs input:checked')).map(cb => cb.value);
+                    const newHistory = {
+                        id: mockClientData[currentClientId].history.length + 1,
+                        date: new Date().toISOString().split('T')[0],
+                        editor: 'currentUser',
+                        action: '조건 설정 저장',
+                        data: {
+                            semesterName: document.getElementById('condition-semester-name').value,
+                            semesterStart: '', // Add date inputs if needed
+                            semesterEnd: '',
+                            schoolDocs: checkedDocs,
+                            fee: document.getElementById('condition-fee').value,
+                            memo: document.getElementById('condition-memo').value
+                        }
+                    };
+                    mockClientData[currentClientId].history.push(newHistory);
+                    renderHistoryTab(currentClientId);
+                    alert('저장되었습니다. 히스토리 탭에서 확인하세요.');
+                });
+            }
+
+            // --- Schedule Save Logic ---
+            document.getElementById('schedule-save-btn')?.addEventListener('click', () => {
+                const newHistory = {
+                    id: mockClientData[currentClientId].history.length + 1,
+                    date: new Date().toISOString().split('T')[0],
+                    editor: 'currentUser',
+                    action: '일정 설정 저장',
+                    data: {
+                        method: document.querySelector('input[name="method"]:checked')?.value || '',
+                        appStartDate: document.getElementById('app-start-date').value,
+                        appEndDate: document.getElementById('app-end-date').value
+                    }
+                };
+                mockClientData[currentClientId].history.push(newHistory);
+                renderHistoryTab(currentClientId);
+                alert('저장되었습니다. 히스토리 탭에서 확인하세요.');
+            });
+
+            // --- History Edit Logic ---
+            document.getElementById('tab-content-history').addEventListener('click', (e) => {
+                if (!e.target.matches('.edit-history-btn')) return;
+                
+                const historyItemEl = e.target.closest('[data-history-id]');
+                const historyId = parseInt(historyItemEl.dataset.historyId, 10);
+                const historyEntry = mockClientData[currentClientId].history.find(h => h.id === historyId);
+                
+                const modalContent = document.getElementById('history-modal-content');
+                if (historyEntry.action.includes('조건')) {
+                    modalContent.innerHTML = document.getElementById('tab-content-condition').innerHTML;
+                    // Populate with history data
+                    modalContent.querySelector('input[type="text"]').value = historyEntry.data.semesterName;
+                    modalContent.querySelector('input[type="number"]').value = historyEntry.data.fee;
+                    modalContent.querySelector('textarea').value = historyEntry.data.memo;
+                } else if (historyEntry.action.includes('일정')) {
+                    modalContent.innerHTML = document.getElementById('tab-content-schedule').innerHTML;
+                     // Populate with history data
+                    modalContent.querySelector(`input[name="method"][value="${historyEntry.data.method}"]`).checked = true;
+                    modalContent.querySelector('#app-start-date').value = historyEntry.data.appStartDate;
+                    modalContent.querySelector('#app-end-date').value = historyEntry.data.appEndDate;
+                }
+                document.getElementById('history-edit-modal').classList.remove('hidden');
+                
+                document.getElementById('history-modal-save-btn').onclick = () => {
+                     const newHistory = {
+                        id: mockClientData[currentClientId].history.length + 1,
+                        date: new Date().toISOString().split('T')[0],
+                        editor: 'currentUser',
+                        action: `${historyEntry.action} (수정됨)`,
+                        data: {} // Repopulate data from modal form
+                    };
+                    mockClientData[currentClientId].history.push(newHistory);
+                    renderHistoryTab(currentClientId);
+                    document.getElementById('history-edit-modal').classList.add('hidden');
+                };
+            });
+            
+            document.querySelector('[data-close-modal="history-edit-modal"]').addEventListener('click', () => {
+                document.getElementById('history-edit-modal').classList.add('hidden');
+            });
+
+
+            // --- Date Calculation Logic ---
+            const appEndDateInput = document.getElementById('app-end-date');
+            const revisionDeadlineInput = document.getElementById('revision-deadline');
+            const submissionDeadlineInput = document.getElementById('submission-deadline');
+
+            function addBusinessDays(date, days) {
+                const newDate = new Date(date);
+                let added = 0;
+                while (added < days) {
+                    newDate.setDate(newDate.getDate() + 1);
+                    const dayOfWeek = newDate.getDay();
+                    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+                        added++;
+                    }
+                }
+                return newDate;
+            }
+
+            function formatDateTimeLocal(date) {
+                if (!date || isNaN(date)) return '';
+                const yyyy = date.getFullYear();
+                const mm = String(date.getMonth() + 1).padStart(2, '0');
+                const dd = String(date.getDate()).padStart(2, '0');
+                const hh = String(date.getHours()).padStart(2, '0');
+                const mi = String(date.getMinutes()).padStart(2, '0');
+                return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
+            }
+
+            if (appEndDateInput) {
+                appEndDateInput.addEventListener('change', () => {
+                    const endDate = new Date(appEndDateInput.value);
+                    if (!isNaN(endDate)) {
+                        const revisionDate = addBusinessDays(endDate, 3);
+                        revisionDeadlineInput.value = formatDateTimeLocal(revisionDate);
+                        
+                        const submissionDate = addBusinessDays(revisionDate, 4);
+                        submissionDeadlineInput.value = formatDateTimeLocal(submissionDate);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

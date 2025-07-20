@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 대시보드 - 거주지 서류 검토</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Noto Sans KR -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #aab2bd; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #8892a1; }
+        .modal-backdrop { background-color: rgba(0,0,0,0.5); }
+        #image-viewer { cursor: grab; background-color: #1e293b; }
+        #image-viewer.grabbing { cursor: grabbing; }
+        #document-image { transition: transform 0.1s ease-out; pointer-events: none; }
+        summary::marker {
+            content: '▶ ';
+            font-size: 0.8em;
+        }
+        details[open] > summary::marker {
+            content: '▼ ';
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="flex h-screen">
+        <!-- Left Panel: Task List -->
+        <aside class="w-64 flex-shrink-0 bg-white border-r border-slate-200 flex flex-col">
+            <div class="h-16 flex items-center justify-center border-b border-slate-200">
+                <h1 class="text-xl font-bold text-indigo-600">HADASH</h1>
+            </div>
+            <nav class="flex-1 px-4 py-4 overflow-y-auto">
+                <ul class="space-y-1">
+                    <li>
+                        <a href="main.html" data-page="home" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                            홈
+                        </a>
+                    </li>
+                    <li>
+                        <a href="users.html" data-page="users" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21a6 6 0 00-9-5.197m0 0A5.975 5.975 0 0112 13a5.975 5.975 0 013-1.197M15 21a9 9 0 00-6-6.803"></path></svg>
+                            사용자 관리
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./파일업로드.html" data-page="users" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21a6 6 0 00-9-5.197m0 0A5.975 5.975 0 0112 13a5.975 5.975 0 013-1.197M15 21a9 9 0 00-6-6.803"></path></svg>
+                            파일 업로드
+                        </a>
+                    </li>
+                    <li>
+                        <button type="button" class="nav-accordion flex items-center w-full px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg text-left" aria-controls="submenu-clients">
+                           <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                             <span>클라이언트</span>
+                            <svg class="w-4 h-4 ml-auto transition-transform" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        </button>
+                        <ul id="submenu-clients" class="submenu mt-1 space-y-1 pl-5">
+                            <li><a href="./대학교.html" class="nav-link block px-3 py-2 text-sm rounded-lg">대학교</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <button type="button" class="nav-accordion flex items-center w-full px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg text-left bg-indigo-50 font-semibold" aria-controls="submenu-services">
+                            <svg class="w-5 h-5 mr-3 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            <span class="text-indigo-600">서비스</span>
+                            <svg class="w-4 h-4 ml-auto transition-transform rotate-180" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        </button>
+                        <ul id="submenu-services" class="submenu mt-1 space-y-1 pl-5 open">
+                            <li><a href="./신규외국인등록증.html" class="nav-link block px-3 py-2 text-sm rounded-lg text-indigo-600 font-semibold bg-indigo-50">신규 외국인등록증</a></li>
+                            <li><a href="#" class="nav-link block px-3 py-2 text-sm rounded-lg">체류기간 연장</a></li>
+                            <li><a href="#" class="nav-link block px-3 py-2 text-sm rounded-lg">모바일</a></li>
+                        </ul>
+                    </li>
+                     <li>
+                        <a href="./업무진행.html" data-page="work" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg">
+                           <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9V3m0 9a9 9 0 00-9 9"></path></svg>
+                            업무 관리
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-page="admin" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0 3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            관리자
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Right Panel: Workspace -->
+        <main class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+            <!-- Fixed Image Viewer -->
+            <div class="w-full lg:w-1/2 flex flex-col h-full bg-slate-800">
+                <div id="image-viewer" class="w-full flex-1 relative overflow-hidden">
+                    <img id="document-image" src="https://placehold.co/800x1100/1e293b/94a3b8?text=Select+Task" class="absolute top-1/2 left-1/2" style="transform: translate(-50%, -50%) scale(1);">
+                     <div class="absolute bottom-4 left-4 bg-gray-900 bg-opacity-50 rounded-full p-1 flex items-center space-x-2">
+                        <button id="zoomOutBtn" class="p-2 text-white hover:bg-white/20 rounded-full"><i class="fas fa-search-minus"></i></button>
+                        <span id="zoomLevel" class="text-white text-sm font-mono w-12 text-center">100%</span>
+                        <button id="zoomInBtn" class="p-2 text-white hover:bg-white/20 rounded-full"><i class="fas fa-search-plus"></i></button>
+                    </div>
+                    <a id="original-link" href="#" target="_blank" class="absolute top-4 right-4 px-3 py-1 text-xs text-white bg-gray-900 bg-opacity-50 rounded-full hover:bg-opacity-75">원본 확인</a>
+                </div>
+            </div>
+            <!-- Scrollable Info & Checklist -->
+            <div id="review-workspace" class="w-full lg:w-1/2 flex flex-col h-full bg-white border-l">
+                <!-- Workspace content will be populated here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Revision Modal -->
+    <div id="revision-modal" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop">
+        <div class="bg-white rounded-lg shadow-xl z-20 w-full max-w-lg mx-4">
+            <div class="p-6 border-b"><h2 class="text-xl font-bold text-gray-800">보완 요청 사유 작성</h2></div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <h4 class="font-semibold mb-2">다음 항목에 대한 보완이 필요합니다:</h4>
+                    <ul id="revision-items-list" class="list-disc list-inside text-sm text-red-600"></ul>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">상세 사유 작성 (고객 전달용)</label>
+                    <textarea id="revision-comment" rows="4" placeholder="예: 계약 기간이 명확하게 보이지 않습니다. 선명하게 다시 촬영하여 제출해주세요." class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></textarea>
+                </div>
+            </div>
+            <div class="p-4 bg-gray-50 flex justify-end space-x-2">
+                <button onclick="closeRevisionModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border rounded-md hover:bg-gray-50">취소</button>
+                <button onclick="sendRevisionRequest()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 border rounded-md hover:bg-red-700">요청 보내기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- State and Data ---
+            let mockTasks = [
+                { 
+                    id: 1, studentName: '김철수', service: 'D-2 연장', active: true, 
+                    info: { '한글 이름': '김철수', '영문 이름': 'Kim Chul Soo', '생년월일': '1998-03-15', '성별': '남성', '이메일': 'chulsoo.kim@email.com', '연락처': '+82-10-1234-5678', '대학교': '서울대학교 (기계공학부)', '비자 타입': 'D-2 비자', '여권 번호': 'P123456789' },
+                    residenceType: 'lease',
+                    submittedImages: [
+                        { id: 'img1', src: 'https://placehold.co/400x550/a0aec0/ffffff?text=계약서+1p', classified: false, type: null, checklist: ['계약 기간 유효', '정보 일치'], checkedItems: [] },
+                        { id: 'img2', src: 'https://placehold.co/400x550/a0aec0/ffffff?text=계약서+2p', classified: false, type: null, checklist: ['확정일자 확인'], checkedItems: [] },
+                        { id: 'img3', src: 'https://placehold.co/400x550/a0aec0/ffffff?text=임대인+신분증', classified: false, type: null, checklist: ['위변조 흔적 없음'], checkedItems: [] },
+                    ]
+                },
+                { 
+                    id: 2, studentName: '최유리', service: 'D-4 신규', active: false, 
+                    info: { '한글 이름': '최유리', '영문 이름': 'Choi Yuri', '대학교': '연세대학교 (어학당)' },
+                    residenceType: 'dorm',
+                    submittedImages: [
+                        { id: 'img4', src: 'https://placehold.co/400x550/a0aec0/ffffff?text=기숙사+확인서', classified: false, type: null, checklist: ['확인서 직인 유무', '거주 기간 일치 여부'], checkedItems: [] },
+                    ]
+                }
+            ];
+
+            const docRequirements = {
+                dorm: { zones: ['기숙사 거주 확인서'] },
+                lease: { zones: ['임대차 계약서', '임대인 신분증', '월세 납입 영수증'] },
+                relative: { zones: ['거주숙소제공 확인서', '제공자 신분증'] }
+            };
+            
+            let activeTaskId = 1;
+            let activeImageId = null;
+
+            // --- DOM Elements ---
+            const taskListEl = document.getElementById('task-list');
+            const taskCountEl = document.getElementById('task-count');
+            const workspaceEl = document.getElementById('review-workspace');
+            const mainImage = document.getElementById('document-image');
+            const originalLink = document.getElementById('original-link');
+            const revisionModal = document.getElementById('revision-modal');
+
+            // --- Functions ---
+            function renderTaskList() {
+                taskListEl.innerHTML = '';
+                mockTasks.forEach(task => {
+                    const isActive = task.id === activeTaskId;
+                    taskListEl.innerHTML += `
+                        <a href="#" class="task-item flex items-center p-3 rounded-md ${isActive ? 'bg-indigo-50 border-l-4 border-indigo-500' : 'hover:bg-gray-50'}" data-task-id="${task.id}">
+                            <div class="flex-grow">
+                                <p class="font-semibold ${isActive ? 'text-indigo-800' : 'text-gray-700'}">${task.studentName}</p>
+                                <p class="text-sm text-gray-500">거주지 서류</p>
+                            </div>
+                            ${isActive ? '<i class="fas fa-chevron-right text-gray-400"></i>' : ''}
+                        </a>
+                    `;
+                });
+                taskCountEl.textContent = mockTasks.length;
+            }
+
+            function renderWorkspace(taskId) {
+                const task = mockTasks.find(t => t.id === taskId);
+                if (!task) {
+                    workspaceEl.innerHTML = `<div class="p-6 text-center text-gray-500">검토할 항목을 선택해주세요.</div>`;
+                    mainImage.src = 'https://placehold.co/800x1100/1e293b/94a3b8?text=Select+Task';
+                    originalLink.href = '#';
+                    return;
+                }
+                
+                if (!activeImageId || !task.submittedImages.find(i => i.id === activeImageId)) {
+                    activeImageId = task.submittedImages[0]?.id || null;
+                }
+                
+                const activeImg = task.submittedImages.find(i => i.id === activeImageId);
+                if (activeImg) {
+                     mainImage.src = activeImg.src;
+                     originalLink.href = activeImg.src;
+                } else {
+                     mainImage.src = 'https://placehold.co/800x1100/1e293b/94a3b8?text=No+Image';
+                     originalLink.href = '#';
+                }
+
+                const infoHTML = Object.entries(task.info).map(([key, value]) => `
+                    <div class="grid grid-cols-3"><strong class="text-gray-500 col-span-1">${key}:</strong> <span class="col-span-2">${value}</span></div>
+                `).join('');
+                
+                workspaceEl.innerHTML = `
+                    <div class="p-6 border-b">
+                        <h1 class="text-xl font-bold text-gray-800">${task.studentName} 님의 거주지 서류 검토</h1>
+                        <p class="text-sm text-gray-500">신청 서비스: ${task.service}</p>
+                    </div>
+                    <div class="flex-grow overflow-y-auto p-6">
+                        <div class="space-y-8">
+                            <details>
+                                <summary class="font-semibold text-gray-700 mb-3 cursor-pointer">고객 상세 정보</summary>
+                                <div class="border border-gray-200 rounded-lg p-4 text-sm space-y-2 mt-2">${infoHTML}</div>
+                            </details>
+                            <div class="border-t pt-6">
+                                <div class="flex items-center justify-between mb-3"><h3 class="font-semibold text-gray-700">제출 서류 분류</h3><span id="classification-status" class="text-sm font-medium text-slate-500"></span></div>
+                                <div id="submitted-images" class="flex space-x-3 overflow-x-auto pb-2"></div>
+                            </div>
+                            <div id="active-document-review-section"></div>
+                            <div class="border-t pt-6">
+                                <h3 class="font-semibold text-gray-700 mb-3">검토 메모</h3>
+                                <div><textarea rows="4" placeholder="검토 관련 특이사항이나 내부 공유용 메모를 작성하세요." class="w-full rounded-md border-gray-300 shadow-sm text-sm"></textarea></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 border-t bg-white flex items-center justify-end space-x-3">
+                        <button id="revision-btn" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700">보완 요청</button>
+                        <button id="approve-btn" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>승인하기</button>
+                    </div>
+                `;
+                
+                renderSubmittedImages(taskId);
+                renderActiveDocumentReview(taskId);
+                attachWorkspaceListeners();
+            }
+
+            function renderSubmittedImages(taskId) {
+                const task = mockTasks.find(t => t.id === taskId);
+                const container = document.getElementById('submitted-images');
+                const zones = docRequirements[task.residenceType].zones;
+                const classifiedCount = task.submittedImages.filter(img => img.classified).length;
+                document.getElementById('classification-status').textContent = `분류완료: ${classifiedCount} / ${task.submittedImages.length}`;
+                
+                container.innerHTML = task.submittedImages.map(img => {
+                    const statusHTML = img.classified ? `<span class="text-xs bg-green-100 text-green-800 px-1.5 py-0.5 rounded-full">분류 완료</span>` : `<span class="text-xs text-slate-500">미분류</span>`;
+                    const optionsHTML = zones.map(zone => `<option value="${zone}" ${img.type === zone ? 'selected' : ''}>${zone}</option>`).join('');
+
+                    return `
+                        <div class="flex-shrink-0 text-center w-28">
+                            <div class="w-24 h-32 border-2 ${img.id === activeImageId ? 'border-indigo-500' : 'border-slate-200'} rounded cursor-pointer transition-all hover:border-indigo-400" data-img-id="${img.id}">
+                                <img src="${img.src}" class="w-full h-full object-cover rounded-sm">
+                            </div>
+                            <select class="mt-1 w-full text-xs border-gray-300 rounded-md shadow-sm" data-img-id="${img.id}">
+                                <option value="">유형 선택</option>
+                                ${optionsHTML}
+                            </select>
+                            <div class="mt-1">${statusHTML}</div>
+                        </div>
+                    `;
+                }).join('');
+
+                container.querySelectorAll('[data-img-id]').forEach(item => {
+                    if (item.tagName === 'DIV') {
+                        item.addEventListener('click', () => {
+                            activeImageId = item.dataset.imgId;
+                            renderWorkspace(taskId);
+                        });
+                    } else if (item.tagName === 'SELECT') {
+                        item.addEventListener('change', (e) => {
+                            classifyImage(taskId, e.target.dataset.imgId, e.target.value);
+                        });
+                    }
+                });
+            }
+
+            function renderActiveDocumentReview(taskId) {
+                const task = mockTasks.find(t => t.id === taskId);
+                const activeImg = task.submittedImages.find(i => i.id === activeImageId);
+                const container = document.getElementById('active-document-review-section');
+
+                if (!activeImg || !activeImg.classified) {
+                    container.innerHTML = '';
+                    return;
+                }
+                
+                const checklistHTML = activeImg.checklist.map(item => `
+                    <label class="flex items-center p-3 bg-slate-50 rounded-md hover:bg-slate-100 cursor-pointer">
+                        <input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 checklist-item" data-img-id="${activeImg.id}" data-label="${item}" ${activeImg.checkedItems.includes(item) ? 'checked' : ''}>
+                        <span class="ml-3 text-sm text-gray-700">${item}</span>
+                    </label>
+                `).join('');
+
+                container.innerHTML = `
+                    <div class="border-t pt-6">
+                        <h3 class="font-semibold text-gray-700 mb-3">"${activeImg.type}" 검토 체크리스트</h3>
+                        <div class="space-y-3">${checklistHTML}</div>
+                    </div>
+                `;
+                 document.querySelectorAll('.checklist-item').forEach(item => item.addEventListener('change', handleChecklistChange));
+            }
+            
+            function handleChecklistChange(e) {
+                const { imgId, label } = e.target.dataset;
+                const task = mockTasks.find(t => t.id === activeTaskId);
+                const image = task.submittedImages.find(i => i.id === imgId);
+                if (e.target.checked) {
+                    if (!image.checkedItems.includes(label)) {
+                        image.checkedItems.push(label);
+                    }
+                } else {
+                    image.checkedItems = image.checkedItems.filter(item => item !== label);
+                }
+                checkButtonStates();
+            }
+
+            function classifyImage(taskId, imageId, type) {
+                const task = mockTasks.find(t => t.id === taskId);
+                const image = task.submittedImages.find(img => img.id === imageId);
+                if (image) {
+                    image.classified = !!type;
+                    image.type = type || null;
+                }
+                renderSubmittedImages(taskId);
+                renderActiveDocumentReview(taskId);
+                checkButtonStates();
+            }
+
+            function attachWorkspaceListeners() {
+                document.querySelectorAll('.checklist-item').forEach(item => item.addEventListener('change', checkButtonStates));
+                document.getElementById('revision-btn').addEventListener('click', openCorrectionModal);
+                document.getElementById('approve-btn').addEventListener('click', () => {
+                    alert('승인 처리되었습니다.');
+                    const currentIndex = mockTasks.findIndex(t => t.id === activeTaskId);
+                    mockTasks.splice(currentIndex, 1);
+                    activeTaskId = mockTasks.length > 0 ? mockTasks[0].id : null;
+                    renderTaskList();
+                    renderWorkspace(activeTaskId);
+                });
+                checkButtonStates();
+            }
+            
+            function checkButtonStates() {
+                const task = mockTasks.find(t => t.id === activeTaskId);
+                if(!task) return;
+
+                const allImagesClassified = task.submittedImages.every(img => img.classified);
+                const allChecklistChecked = task.submittedImages.every(img => img.checklist.length === img.checkedItems.length);
+                
+                const isApprovable = allImagesClassified && allChecklistChecked;
+                document.getElementById('approve-btn').disabled = !isApprovable;
+                document.getElementById('revision-btn').disabled = isApprovable;
+            }
+
+            taskListEl.addEventListener('click', (e) => {
+                e.preventDefault();
+                const taskItem = e.target.closest('.task-item');
+                if (taskItem) {
+                    activeTaskId = parseInt(taskItem.dataset.taskId);
+                    renderTaskList();
+                    renderWorkspace(activeTaskId);
+                }
+            });
+
+            // --- Modal & Image Viewer Logic ---
+            window.openCorrectionModal = function() {
+                const task = mockTasks.find(t => t.id === activeTaskId);
+                const revisionList = document.getElementById('revision-items-list');
+                revisionList.innerHTML = '';
+                let uncheckedCount = 0;
+                task.submittedImages.forEach(img => {
+                    if (img.classified) {
+                        const unchecked = img.checklist.filter(item => !img.checkedItems.includes(item));
+                        if(unchecked.length > 0) {
+                            const li = document.createElement('li');
+                            li.innerHTML = `<strong>${img.type}:</strong> ${unchecked.join(', ')}`;
+                            revisionList.appendChild(li);
+                            uncheckedCount += unchecked.length;
+                        }
+                    }
+                });
+                if (uncheckedCount === 0) {
+                     revisionList.innerHTML = '<li>체크되지 않은 항목이 없습니다. 상세 사유를 직접 입력해주세요.</li>';
+                }
+                revisionModal.classList.remove('hidden');
+            }
+            window.closeRevisionModal = function() { revisionModal.classList.add('hidden'); }
+            window.sendRevisionRequest = function() {
+                alert('보완 요청을 성공적으로 보냈습니다.');
+                closeRevisionModal();
+                const currentIndex = mockTasks.findIndex(t => t.id === activeTaskId);
+                mockTasks.splice(currentIndex, 1);
+                activeTaskId = mockTasks.length > 0 ? mockTasks[0].id : null;
+                renderTaskList();
+                renderWorkspace(activeTaskId);
+            }
+
+            const zoomInBtn = document.getElementById('zoomInBtn');
+            const zoomOutBtn = document.getElementById('zoomOutBtn');
+            const zoomLevelSpan = document.getElementById('zoomLevel');
+            let currentScale = 1;
+            function updateZoom() {
+                mainImage.style.transform = `translate(-50%, -50%) scale(${currentScale})`;
+                zoomLevelSpan.textContent = `${Math.round(currentScale * 100)}%`;
+            }
+            zoomInBtn.addEventListener('click', () => { currentScale = Math.min(3, currentScale + 0.2); updateZoom(); });
+            zoomOutBtn.addEventListener('click', () => { currentScale = Math.max(0.5, currentScale - 0.2); updateZoom(); });
+            
+            // --- Initial Render ---
+            renderTaskList();
+            renderWorkspace(activeTaskId);
+        });
+    </script>
+</body>
+</html>

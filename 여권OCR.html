@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[프로토타입] 서류 검토 페이지</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', 'Pretendard', sans-serif; }
+        .image-viewer {
+            transition: transform 0.2s ease-out;
+        }
+        .modal-backdrop { background-color: rgba(0,0,0,0.5); }
+    </style>
+</head>
+<body class="bg-gray-100 h-screen overflow-hidden">
+
+    <div class="flex h-full">
+        <!-- 좌측: 학생 리스트 -->
+        <aside class="w-1/4 bg-white border-r border-gray-200 flex flex-col">
+            <div class="p-4 border-b">
+                <h2 class="text-lg font-semibold text-gray-800">나의 검토 목록 (3)</h2>
+            </div>
+            <div class="flex-grow overflow-y-auto">
+                <nav class="p-2">
+                    <a href="#" class="flex items-center p-3 rounded-md bg-indigo-50 border-l-4 border-indigo-500">
+                        <div class="flex-grow">
+                            <p class="font-semibold text-indigo-800">김철수</p>
+                            <p class="text-sm text-gray-500">여권 사본</p>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </a>
+                    <a href="#" class="flex items-center p-3 rounded-md hover:bg-gray-50">
+                        <div class="flex-grow">
+                            <p class="font-medium text-gray-700">최유리</p>
+                            <p class="text-sm text-gray-500">재학증명서</p>
+                        </div>
+                    </a>
+                    <a href="#" class="flex items-center p-3 rounded-md hover:bg-gray-50">
+                        <div class="flex-grow">
+                            <p class="font-medium text-gray-700">이도현</p>
+                            <p class="text-sm text-gray-500">거주지 입증 서류</p>
+                        </div>
+                    </a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- 우측: 서류 검토 워크스페이스 -->
+        <main class="w-3/4 flex h-full">
+            <!-- 고정된 이미지 뷰어 -->
+            <div class="w-1/2 bg-gray-800 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+                <div id="image-container" class="w-full h-full flex items-center justify-center">
+                    <img id="reviewImage" src="https://placehold.co/800x1100/F3F4F6/374151?text=Passport+Sample" alt="제출 서류 이미지" class="max-w-full max-h-full object-contain image-viewer cursor-grab">
+                </div>
+                <div class="absolute bottom-4 left-4 bg-gray-900 bg-opacity-50 rounded-full p-1 flex items-center space-x-2">
+                    <button id="zoomOutBtn" class="p-2 text-white hover:bg-white/20 rounded-full"><i class="fas fa-search-minus"></i></button>
+                    <span id="zoomLevel" class="text-white text-sm font-mono">100%</span>
+                    <button id="zoomInBtn" class="p-2 text-white hover:bg-white/20 rounded-full"><i class="fas fa-search-plus"></i></button>
+                </div>
+                 <a href="https://placehold.co/800x1100/F3F4F6/374151?text=Passport+Sample" target="_blank" class="absolute top-4 right-4 px-3 py-1 text-xs text-white bg-gray-900 bg-opacity-50 rounded-full hover:bg-opacity-75">
+                    원본 확인 <i class="fas fa-external-link-alt ml-1"></i>
+                </a>
+            </div>
+
+            <!-- 정보 및 체크리스트 (구조 변경) -->
+            <div class="w-1/2 bg-white flex flex-col h-full">
+                <!-- 상단 고정 영역 -->
+                <div class="flex-shrink-0">
+                    <div class="p-6 border-b">
+                        <h1 class="text-xl font-bold text-gray-800">김철수 님의 여권 사본 검토</h1>
+                        <p class="text-sm text-gray-500">신청 서비스: 체류기간 연장</p>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-semibold text-gray-700 mb-3">고객 상세 정보</h3>
+                        <div class="border border-gray-200 rounded-lg p-4 text-sm">
+                            <div class="grid grid-cols-2 gap-x-4 gap-y-2">
+                                <div><strong class="text-gray-500">한글 이름:</strong> 김철수</div>
+                                <div><strong class="text-gray-500">영문 이름:</strong> Kim Chul Soo</div>
+                                <div><strong class="text-gray-500">생년월일:</strong> 1998-03-15</div>
+                                <div><strong class="text-gray-500">성별:</strong> 남성</div>
+                                <div><strong class="text-gray-500">이메일:</strong> chulsoo.kim@email.com</div>
+                                <div><strong class="text-gray-500">연락처:</strong> +82-10-1234-5678</div>
+                                <div class="col-span-2 border-t mt-2 pt-2"><strong class="text-gray-500">대학교:</strong> 서울대학교 (기계공학부)</div>
+                                <div><strong class="text-gray-500">비자 타입:</strong> D-2 비자</div>
+                                <div><strong class="text-gray-500">여권 번호:</strong> P123456789</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 하단 스크롤 영역 -->
+                <div class="flex-grow overflow-y-auto p-6 border-t">
+                    <div class="space-y-8">
+                        <div>
+                            <h3 class="font-semibold text-gray-700 mb-3">검토 체크리스트</h3>
+                            <div id="checklist" class="space-y-3">
+                                <label class="flex items-center p-3 bg-gray-50 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 checklist-item"><span class="ml-3 text-sm text-gray-700">사진과 실물 얼굴 일치 여부</span></label>
+                                <label class="flex items-center p-3 bg-gray-50 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 checklist-item"><span class="ml-3 text-sm text-gray-700">여권 만료 기간 유효 여부</span></label>
+                                <label class="flex items-center p-3 bg-gray-50 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 checklist-item"><span class="ml-3 text-sm text-gray-700">OCR 정보와 여권 정보 일치 여부</span></label>
+                                <label class="flex items-center p-3 bg-gray-50 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 checklist-item"><span class="ml-3 text-sm text-gray-700">서류 위변조 흔적 없음</span></label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="font-semibold text-gray-700 mb-3">검토 메모</h3>
+                            <div>
+                                <textarea rows="4" placeholder="검토 관련 특이사항이나 내부 공유용 메모를 작성하세요." class="w-full rounded-md border-gray-300 shadow-sm text-sm"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 하단 고정 버튼 영역 -->
+                <div class="p-6 border-t bg-white flex-shrink-0 flex items-center justify-end space-x-3">
+                    <button onclick="openCorrectionModal()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700">보완 요청</button>
+                    <button id="approveBtn" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>승인하기</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 보완 요청 모달 -->
+    <div id="correctionModal" class="fixed inset-0 z-10 hidden items-center justify-center">
+        <div class="modal-backdrop absolute inset-0" onclick="closeCorrectionModal()"></div>
+        <div class="bg-white rounded-lg shadow-xl z-20 w-full max-w-lg mx-4">
+            <div class="p-6 border-b"><h2 class="text-xl font-bold text-gray-800">보완 요청 사유 작성</h2></div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">자주 쓰는 사유 선택</label>
+                    <select class="w-full rounded-md border-gray-300 shadow-sm"><option>사유를 선택하거나 직접 입력하세요</option><option>사진 화질이 선명하지 않습니다.</option><option>서류의 유효기간이 만료되었습니다.</option></select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">상세 사유 작성 (고객 전달용)</label>
+                    <textarea rows="4" placeholder="예: 여권 번호가 잘 보이지 않습니다. 빛 반사 없이 선명하게 다시 촬영하여 제출해주세요." class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></textarea>
+                </div>
+            </div>
+            <div class="p-4 bg-gray-50 flex justify-end space-x-2">
+                <button onclick="closeCorrectionModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border rounded-md hover:bg-gray-50">취소</button>
+                <button onclick="sendCorrectionRequest()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 border rounded-md hover:bg-red-700">요청 보내기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const checklistItems = document.querySelectorAll('.checklist-item');
+        const approveBtn = document.getElementById('approveBtn');
+        const correctionModal = document.getElementById('correctionModal');
+        const reviewImage = document.getElementById('reviewImage');
+        const zoomInBtn = document.getElementById('zoomInBtn');
+        const zoomOutBtn = document.getElementById('zoomOutBtn');
+        const zoomLevelSpan = document.getElementById('zoomLevel');
+        
+        let currentScale = 1;
+        const zoomStep = 0.2;
+
+        // 체크리스트 로직
+        function checkApprovalStatus() {
+            const allChecked = Array.from(checklistItems).every(item => item.checked);
+            approveBtn.disabled = !allChecked;
+        }
+        checklistItems.forEach(item => {
+            item.addEventListener('change', checkApprovalStatus);
+        });
+
+        // 이미지 줌 로직
+        function updateZoom() {
+            reviewImage.style.transform = `scale(${currentScale})`;
+            zoomLevelSpan.textContent = `${Math.round(currentScale * 100)}%`;
+        }
+        zoomInBtn.addEventListener('click', () => {
+            currentScale += zoomStep;
+            updateZoom();
+        });
+        zoomOutBtn.addEventListener('click', () => {
+            if (currentScale > zoomStep) {
+                currentScale -= zoomStep;
+                updateZoom();
+            }
+        });
+        reviewImage.parentElement.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            if (e.deltaY < 0) { // 휠 위로
+                currentScale += zoomStep;
+            } else { // 휠 아래로
+                if (currentScale > zoomStep) {
+                    currentScale -= zoomStep;
+                }
+            }
+            updateZoom();
+        });
+        
+        // 보완 요청 모달 로직
+        function openCorrectionModal() { correctionModal.classList.remove('hidden'); correctionModal.classList.add('flex'); }
+        function closeCorrectionModal() { correctionModal.classList.add('hidden'); correctionModal.classList.remove('flex'); }
+        function sendCorrectionRequest() { alert('보완 요청을 성공적으로 보냈습니다.'); closeCorrectionModal(); }
+
+        // 초기화
+        checkApprovalStatus();
+    </script>
+</body>
+</html>

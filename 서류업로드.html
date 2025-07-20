@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 대시보드 - 파일 업로드</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Noto Sans KR -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #aab2bd; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #8892a1; }
+        .submenu { display: none; overflow: hidden; transition: max-height 0.3s ease-in-out; max-height: 0; }
+        .submenu.open { display: block; max-height: 500px; }
+        .modal-backdrop { transition: opacity 0.3s ease; }
+        .drag-area { border: 2px dashed #cbd5e1; }
+        .drag-area.active { border-color: #4f46e5; background-color: #eef2ff; }
+        .toggle-checkbox:checked { right: 0; border-color: #4f46e5; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #4f46e5; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 flex-shrink-0 bg-white border-r border-slate-200 flex flex-col">
+            <div class="h-16 flex items-center justify-center border-b border-slate-200">
+                <h1 class="text-xl font-bold text-indigo-600">HADASH</h1>
+            </div>
+            <nav class="flex-1 px-4 py-4 overflow-y-auto">
+                <ul class="space-y-1">
+                    <li>
+                        <a href="main.html" data-page="home" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                            홈
+                        </a>
+                    </li>
+                    <li>
+                        <a href="users.html" data-page="users" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21a6 6 0 00-9-5.197m0 0A5.975 5.975 0 0112 13a5.975 5.975 0 013-1.197M15 21a9 9 0 00-6-6.803"></path></svg>
+                            사용자 관리
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./파일업로드.html" data-page="users" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21a6 6 0 00-9-5.197m0 0A5.975 5.975 0 0112 13a5.975 5.975 0 013-1.197M15 21a9 9 0 00-6-6.803"></path></svg>
+                            파일 업로드
+                        </a>
+                    </li>
+                    <li>
+                        <button type="button" class="nav-accordion flex items-center w-full px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg text-left" aria-controls="submenu-clients">
+                           <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                             <span>클라이언트</span>
+                            <svg class="w-4 h-4 ml-auto transition-transform" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        </button>
+                        <ul id="submenu-clients" class="submenu mt-1 space-y-1 pl-5">
+                            <li><a href="./대학교.html" class="nav-link block px-3 py-2 text-sm rounded-lg">대학교</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <button type="button" class="nav-accordion flex items-center w-full px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg text-left bg-indigo-50 font-semibold" aria-controls="submenu-services">
+                            <svg class="w-5 h-5 mr-3 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            <span class="text-indigo-600">서비스</span>
+                            <svg class="w-4 h-4 ml-auto transition-transform rotate-180" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        </button>
+                        <ul id="submenu-services" class="submenu mt-1 space-y-1 pl-5 open">
+                            <li><a href="./신규외국인등록증.html" class="nav-link block px-3 py-2 text-sm rounded-lg text-indigo-600 font-semibold bg-indigo-50">신규 외국인등록증</a></li>
+                            <li><a href="#" class="nav-link block px-3 py-2 text-sm rounded-lg">체류기간 연장</a></li>
+                            <li><a href="#" class="nav-link block px-3 py-2 text-sm rounded-lg">모바일</a></li>
+                        </ul>
+                    </li>
+                     <li>
+                        <a href="./업무진행.html" data-page="work" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg">
+                           <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9V3m0 9a9 9 0 00-9 9"></path></svg>
+                            업무 관리
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-page="admin" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0 3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            관리자
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-auto p-6 sm:p-8">
+            <h2 class="text-2xl font-bold mb-4">파일 업로드</h2>
+            
+            <!-- Sub Tabs for Upload -->
+            <div class="border-b border-slate-200">
+                <nav id="upload-tabs" class="-mb-px flex space-x-6" aria-label="Tabs">
+                    <button data-tab="bulk" class="upload-tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm text-indigo-600 border-indigo-500">벌크 업로드</button>
+                    <button data-tab="individual" class="upload-tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300">개별 업로드</button>
+                </nav>
+            </div>
+            
+            <!-- Bulk Upload Panel -->
+            <div id="upload-panel-bulk" class="upload-tab-panel mt-6">
+                <div id="bulk-mainPage">
+                     <h3 class="text-xl font-bold text-gray-800 mb-4">벌크 서류 업로드</h3>
+                     <div class="bg-white rounded-lg shadow overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="p-4 text-left text-sm font-semibold text-gray-600">학교 코드</th>
+                                        <th class="p-4 text-left text-sm font-semibold text-gray-600">학교명</th>
+                                        <th class="p-4 text-left text-sm font-semibold text-gray-600">부처</th>
+                                        <th class="p-4 text-left text-sm font-semibold text-gray-600">필요 서류 유형</th>
+                                        <th class="p-4 text-left text-sm font-semibold text-gray-600">제출 대상 학생 수</th>
+                                        <th class="p-4 text-left text-sm font-semibold text-gray-600">진행 상태</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="p-4"><button onclick="showBulkDetailPage('UNIV_CAU', '중앙대학교', '학위', '재학증명서')" class="font-medium text-indigo-600 hover:underline">UNIV_CAU</button></td>
+                                        <td class="p-4 text-gray-900">중앙대학교</td>
+                                        <td class="p-4 text-gray-500">학위</td>
+                                        <td class="p-4 text-gray-500">재학증명서</td>
+                                        <td class="p-4 text-gray-500">150 명</td>
+                                        <td class="p-4"><span class="px-2 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full">90% 완료</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="bulk-detailPage" class="hidden">
+                     <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 id="bulk-detailHeader" class="text-xl font-bold text-gray-800"></h3>
+                            <p id="bulk-detailSubHeader" class="text-sm text-gray-500"></p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="openBulkUploadModal()" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border rounded-md hover:bg-indigo-700"><i class="fas fa-upload mr-2"></i>일괄 업로드</button>
+                            <button onclick="showBulkMainPage()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border rounded-md hover:bg-gray-50"><i class="fas fa-arrow-left mr-2"></i>목록으로 돌아가기</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center gap-4 mb-4">
+                            <input type="text" placeholder="학생 이름, 여권 번호 검색" class="w-full max-w-xs rounded-md border-gray-300 shadow-sm text-sm">
+                            <select class="rounded-md border-gray-300 shadow-sm text-sm"><option>제출 상태 전체</option><option>매칭 성공</option><option>매칭 실패</option></select>
+                        </div>
+                        <div class="overflow-x-auto border rounded-lg">
+                            <table class="w-full">
+                                <thead class="bg-gray-50"><tr><th class="p-4 text-center"><input type="checkbox" class="rounded border-gray-300"></th><th class="p-4 text-left text-sm font-semibold text-gray-600">학생 이름</th><th class="p-4 text-left text-sm font-semibold text-gray-600">여권 번호</th><th class="p-4 text-left text-sm font-semibold text-gray-600">제출 상태</th><th class="p-4 text-left text-sm font-semibold text-gray-600">업데이트 상태</th></tr></thead>
+                                <tbody class="divide-y divide-gray-200"><tr class="bg-red-50"><td class="p-4 text-center"><input type="checkbox" class="rounded border-gray-300"></td><td class="p-4 font-medium text-gray-900">최유리</td><td class="p-4 text-gray-500">M12345678</td><td class="p-4"><span class="px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">매칭 실패</span></td><td class="p-4"><button class="text-indigo-600 hover:underline text-sm">수동 매칭</button></td></tr><tr><td class="p-4 text-center"><input type="checkbox" class="rounded border-gray-300"></td><td class="p-4 font-medium text-gray-900">김지아</td><td class="p-4 text-gray-500">M87654321</td><td class="p-4"><span class="px-2 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full">매칭 성공</span></td><td class="p-4 text-gray-500">검토 대기</td></tr></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Individual Upload Panel -->
+            <div id="upload-panel-individual" class="upload-tab-panel mt-6 hidden">
+                 <h3 class="text-xl font-bold text-gray-800 mb-4">개별 서류 업로드</h3>
+                 <div class="bg-white rounded-lg shadow">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <input type="text" placeholder="이름, 이메일, Account ID 검색" class="w-full rounded-md border-gray-300 shadow-sm col-span-1 md:col-span-2">
+                            <select class="w-full rounded-md border-gray-300 shadow-sm"><option>신청 서비스 전체</option></select>
+                            <select class="w-full rounded-md border-gray-300 shadow-sm"><option>진행 상태 전체</option></select>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50"><tr><th class="p-4 text-left text-sm font-semibold text-gray-600">고객 이름</th><th class="p-4 text-left text-sm font-semibold text-gray-600">신청 서비스</th><th class="p-4 text-left text-sm font-semibold text-gray-600">진행 상태</th><th class="p-4 text-left text-sm font-semibold text-gray-600">담당자</th><th class="p-4 text-left text-sm font-semibold text-gray-600">신청일</th><th class="p-4 text-left text-sm font-semibold text-gray-600">액션</th></tr></thead>
+                            <tbody class="divide-y divide-gray-200"><tr class="hover:bg-gray-50"><td class="p-4"><button class="font-medium text-indigo-600 hover:underline">박서준</button></td><td class="p-4 text-gray-500">D-2 연장</td><td class="p-4"><span class="px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">보완 필요</span></td><td class="p-4 text-gray-500">김민준</td><td class="p-4 text-gray-500">2025-07-15</td><td class="p-4"><button onclick="openIndividualUploadModal('user_12345', '박서준')" class="px-3 py-1 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700">파일 업로드</button></td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-container">
+        <!-- 벌크 업로드 Modal -->
+        <div id="bulk-upload-modal" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop"><div class="bg-white rounded-lg shadow-xl z-20 w-full max-w-2xl mx-4"><div class="p-6 border-b flex justify-between items-center"><h2 class="text-xl font-bold text-gray-800">서류 일괄 업로드</h2><button onclick="closeBulkUploadModal()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button></div><div class="p-6 space-y-4"><div><label class="block text-sm font-medium text-gray-700 mb-1">서류 유형 선택</label><select class="w-full rounded-md border-gray-300 shadow-sm"><option>서류 유형을 선택하세요</option><option>여권</option><option>거주지 서류</option><option>사증</option><option>재학증명서</option><option>등록금 납입 증명서</option><option>증명사진</option><option>서명</option><option>장학 증명서</option><option>예치확인서</option></select></div><div class="flex items-center justify-between"><span class="text-sm font-medium text-gray-700">스마트 분류 (OCR)</span><div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in"><input type="checkbox" name="toggle" id="ocrToggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/><label for="ocrToggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label></div></div><div id="bulk-drag-area" class="drag-area p-10 text-center rounded-lg cursor-pointer"><i class="fas fa-cloud-upload-alt text-4xl text-gray-400"></i><p class="mt-2 text-gray-500">파일을 드래그 앤 드롭하거나, 클릭하여 업로드하세요.</p><p class="text-xs text-gray-400 mt-1">모든 파일 규격 지원</p><input type="file" class="hidden" multiple></div></div><div class="p-4 bg-gray-50 flex justify-end"><button onclick="closeBulkUploadModal()" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border rounded-md hover:bg-indigo-700">업로드 시작</button></div></div></div>
+        <!-- 개별 업로드 Modal -->
+        <div id="individual-upload-modal" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop"><div class="bg-white rounded-lg shadow-xl z-20 w-full max-w-lg mx-4"><div class="p-6 border-b flex justify-between items-center"><h2 class="text-xl font-bold text-gray-800">개별 서류 업로드: <span id="uploadCustomerName"></span></h2><button onclick="closeIndividualUploadModal()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button></div><div class="p-6 space-y-4"><div><label class="block text-sm font-medium text-gray-700 mb-1">서류 유형 선택</label><select class="w-full rounded-md border-gray-300 shadow-sm"><option>서류 유형을 선택하세요</option><option>여권 사본</option><option>재학증명서 (보완)</option><option>잔고증명서 (보완)</option></select></div><div id="individual-drag-area" class="drag-area p-10 text-center rounded-lg cursor-pointer"><i class="fas fa-cloud-upload-alt text-4xl text-gray-400"></i><p class="mt-2 text-gray-500">파일을 드래그 앤 드롭하거나, 클릭하여 업로드하세요.</p><input type="file" class="hidden" multiple></div></div><div class="p-4 bg-gray-50 flex justify-end"><button onclick="uploadIndividualFile()" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border rounded-md hover:bg-indigo-700">업로드 완료</button></div></div></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Navigation Logic ---
+            const navAccordions = document.querySelectorAll('.nav-accordion');
+            navAccordions.forEach(accordion => { /* ... existing code ... */ });
+
+            // --- Upload Sub-Tab Switching ---
+            const uploadTabs = document.querySelectorAll('.upload-tab-btn');
+            const uploadPanels = document.querySelectorAll('.upload-tab-panel');
+            uploadTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    uploadTabs.forEach(t => {
+                        t.classList.remove('text-indigo-600', 'border-indigo-500');
+                        t.classList.add('text-slate-500', 'border-transparent');
+                    });
+                    tab.classList.add('text-indigo-600', 'border-indigo-500');
+                    uploadPanels.forEach(p => p.classList.add('hidden'));
+                    document.getElementById(`upload-panel-${tab.dataset.tab}`).classList.remove('hidden');
+                });
+            });
+
+            // --- File Upload Logic ---
+            // Bulk Upload
+            const bulkMainPage = document.getElementById('bulk-mainPage');
+            const bulkDetailPage = document.getElementById('bulk-detailPage');
+            const bulkUploadModal = document.getElementById('bulk-upload-modal');
+            const bulkDragArea = document.getElementById('bulk-drag-area');
+
+            window.showBulkDetailPage = function(schoolCode, schoolName, department, docType) {
+                document.getElementById('bulk-detailHeader').textContent = `${schoolName} (${department})`;
+                document.getElementById('bulk-detailSubHeader').textContent = `${docType} 제출 현황`;
+                bulkMainPage.classList.add('hidden');
+                bulkDetailPage.classList.remove('hidden');
+            }
+            window.showBulkMainPage = function() {
+                bulkDetailPage.classList.add('hidden');
+                bulkMainPage.classList.remove('hidden');
+            }
+            window.openBulkUploadModal = function() {
+                bulkUploadModal.classList.remove('hidden');
+                bulkUploadModal.classList.add('flex');
+            }
+            window.closeBulkUploadModal = function() {
+                bulkUploadModal.classList.add('hidden');
+                bulkUploadModal.classList.remove('flex');
+            }
+            setupDragDrop(bulkDragArea);
+            
+            // Individual Upload
+            const individualUploadModal = document.getElementById('individual-upload-modal');
+            const individualDragArea = document.getElementById('individual-drag-area');
+
+            window.openIndividualUploadModal = function(accountId, customerName) {
+                document.getElementById('uploadCustomerName').textContent = customerName;
+                individualUploadModal.classList.remove('hidden');
+                individualUploadModal.classList.add('flex');
+            }
+            window.closeIndividualUploadModal = function() {
+                individualUploadModal.classList.add('hidden');
+                individualUploadModal.classList.remove('flex');
+            }
+            window.uploadIndividualFile = function() {
+                alert('파일 업로드가 완료되었습니다.');
+                closeIndividualUploadModal();
+            }
+            setupDragDrop(individualDragArea);
+
+            // Common Drag & Drop Function
+            function setupDragDrop(area) {
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    area.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false);
+                });
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    area.addEventListener(eventName, () => area.classList.add('active'), false);
+                });
+                ['dragleave', 'drop'].forEach(eventName => {
+                    area.addEventListener(eventName, () => area.classList.remove('active'), false);
+                });
+                area.addEventListener('drop', (e) => {
+                    let files = e.dataTransfer.files;
+                    alert(`${files.length}개의 파일이 선택되었습니다.`);
+                }, false);
+            }
+        });
+    </script>
+</body>
+</html>

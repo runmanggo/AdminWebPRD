@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 대시보드 - 학생별 진행 상황</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Noto Sans KR -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #aab2bd; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #8892a1; }
+        .submenu { display: none; overflow: hidden; transition: max-height 0.3s ease-in-out; max-height: 0; }
+        .submenu.open { display: block; max-height: 500px; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 flex-shrink-0 bg-white border-r border-slate-200 flex flex-col">
+            <div class="h-16 flex items-center justify-center border-b border-slate-200">
+                <h1 class="text-xl font-bold text-indigo-600">HADASH</h1>
+            </div>
+            <nav class="flex-1 px-4 py-4 overflow-y-auto">
+                <ul class="space-y-1">
+                    <li>
+                        <a href="main.html" data-page="home" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                            홈
+                        </a>
+                    </li>
+                    <li>
+                        <a href="users.html" data-page="users" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21a6 6 0 00-9-5.197m0 0A5.975 5.975 0 0112 13a5.975 5.975 0 013-1.197M15 21a9 9 0 00-6-6.803"></path></svg>
+                            사용자 관리
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./파일업로드.html" data-page="users" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21a6 6 0 00-9-5.197m0 0A5.975 5.975 0 0112 13a5.975 5.975 0 013-1.197M15 21a9 9 0 00-6-6.803"></path></svg>
+                            파일 업로드
+                        </a>
+                    </li>
+                    <li>
+                        <button type="button" class="nav-accordion flex items-center w-full px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg text-left" aria-controls="submenu-clients">
+                           <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                             <span>클라이언트</span>
+                            <svg class="w-4 h-4 ml-auto transition-transform" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        </button>
+                        <ul id="submenu-clients" class="submenu mt-1 space-y-1 pl-5">
+                            <li><a href="./대학교.html" class="nav-link block px-3 py-2 text-sm rounded-lg">대학교</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <button type="button" class="nav-accordion flex items-center w-full px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg text-left bg-indigo-50 font-semibold" aria-controls="submenu-services">
+                            <svg class="w-5 h-5 mr-3 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            <span class="text-indigo-600">서비스</span>
+                            <svg class="w-4 h-4 ml-auto transition-transform rotate-180" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        </button>
+                        <ul id="submenu-services" class="submenu mt-1 space-y-1 pl-5 open">
+                            <li><a href="./신규외국인등록증.html" class="nav-link block px-3 py-2 text-sm rounded-lg text-indigo-600 font-semibold bg-indigo-50">신규 외국인등록증</a></li>
+                            <li><a href="#" class="nav-link block px-3 py-2 text-sm rounded-lg">체류기간 연장</a></li>
+                            <li><a href="#" class="nav-link block px-3 py-2 text-sm rounded-lg">모바일</a></li>
+                        </ul>
+                    </li>
+                     <li>
+                        <a href="./업무진행.html" data-page="work" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg">
+                           <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9V3m0 9a9 9 0 00-9 9"></path></svg>
+                            업무 관리
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-page="admin" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0 3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            관리자
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-auto p-6 sm:p-8">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                <h2 class="text-2xl font-bold">학생별 진행 상황</h2>
+                <a href="task-dashboard.html" class="px-4 py-2 text-sm font-medium text-white bg-slate-600 border rounded-md hover:bg-slate-700">서류 유형별 대시보드 보기</a>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-sm overflow-x-auto">
+                <table class="w-full text-sm text-center">
+                    <thead id="student-progress-table-head" class="bg-slate-50">
+                        <!-- Table header will be populated by JS -->
+                    </thead>
+                    <tbody id="student-progress-table-body" class="divide-y divide-slate-200">
+                        <!-- Table body will be populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Navigation Logic ---
+            const navAccordions = document.querySelectorAll('.nav-accordion');
+            navAccordions.forEach(accordion => { 
+                accordion.addEventListener('click', function() {
+                    const submenu = this.nextElementSibling;
+                    const icon = this.querySelector('svg:last-child');
+                    const isOpen = submenu.classList.toggle('open');
+                    icon.classList.toggle('rotate-180', isOpen);
+                });
+             });
+
+            // --- Student Progress Page Logic ---
+            const taskTypes = ['사증', '여권', '거주지 서류', '재학증명서'];
+            
+            const mockStudentProgress = [
+                { name: '김민준', id: 'usr001', statuses: { '사증': '완료', '여권': '검토 대기', '거주지 서류': '검토 중', '재학증명서': '보완 필요' } },
+                { name: '이서연', id: 'usr002', statuses: { '사증': '검토 중', '여권': '완료', '거주지 서류': '완료', '재학증명서': '검토 대기' } },
+                { name: '박도윤', id: 'usr003', statuses: { '사증': '보완 필요', '여권': '검토 대기', '거주지 서류': '검토 대기', '재학증명서': '완료' } },
+            ];
+
+            const studentProgressTableHead = document.getElementById('student-progress-table-head');
+            const studentProgressTableBody = document.getElementById('student-progress-table-body');
+
+            function getStatusBadge(status) {
+                switch (status) {
+                    case '완료': return 'bg-green-100 text-green-800';
+                    case '검토 중': return 'bg-blue-100 text-blue-800';
+                    case '보완 필요': return 'bg-orange-100 text-orange-800';
+                    case '검토 대기': return 'bg-yellow-100 text-yellow-800';
+                    default: return 'bg-slate-100 text-slate-800';
+                }
+            }
+
+            function renderStudentProgressTable() {
+                const headers = ['학생 정보', ...taskTypes];
+                studentProgressTableHead.innerHTML = `<tr>${headers.map(h => `<th class="p-3 font-semibold text-slate-600">${h}</th>`).join('')}</tr>`;
+
+                studentProgressTableBody.innerHTML = '';
+                mockStudentProgress.forEach(student => {
+                    let rowHTML = `
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-3 text-left font-semibold">${student.name} <span class="text-slate-400 font-normal">(${student.id})</span></td>
+                    `;
+                    taskTypes.forEach(taskType => {
+                        const status = student.statuses[taskType] || '-';
+                        const badgeClass = getStatusBadge(status);
+                        rowHTML += `<td class="p-3"><span class="px-2 py-1 text-xs font-semibold rounded-full ${badgeClass}">${status}</span></td>`;
+                    });
+                    rowHTML += `</tr>`;
+                    studentProgressTableBody.innerHTML += rowHTML;
+                });
+            }
+
+            renderStudentProgressTable();
+        });
+    </script>
+</body>
+</html>

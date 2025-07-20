@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 대시보드 - 사용자 상세</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Noto Sans KR -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #aab2bd; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #8892a1; }
+        .submenu { display: none; overflow: hidden; transition: max-height 0.3s ease-in-out; max-height: 0; }
+        .submenu.open { display: block; max-height: 500px; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+       
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-auto p-6 sm:p-8">
+            <a href="users.html" class="mb-6 inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-900">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                사용자 목록으로 돌아가기
+            </a>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Left Column -->
+                <div class="lg:col-span-1 space-y-6">
+                    <!-- Combined Info Panel -->
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <div id="combined-info-panel">
+                            <!-- All left-side info will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="lg:col-span-2">
+                    <!-- Tabs -->
+                    <div class="bg-white rounded-lg shadow-sm">
+                        <!-- Tab Headers -->
+                        <div class="border-b border-slate-200">
+                            <nav id="detail-tabs" class="-mb-px flex space-x-6 px-6" aria-label="Tabs">
+                                <button data-tab="services" class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-indigo-600 border-indigo-500">서비스 신청 내역</button>
+                                <button data-tab="review" class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300">서류 검토</button>
+                                <button data-tab="qna" class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300">문의 내역</button>
+                            </nav>
+                        </div>
+                        <!-- Tab Content -->
+                        <div class="p-6">
+                            <div id="tab-content-services" class="tab-panel"></div>
+                            <div id="tab-content-review" class="tab-panel hidden space-y-4"></div>
+                            <div id="tab-content-qna" class="tab-panel hidden"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Navigation Logic ---
+            const navAccordions = document.querySelectorAll('.nav-accordion');
+            navAccordions.forEach(accordion => {
+                accordion.addEventListener('click', function() {
+                    const submenu = this.nextElementSibling;
+                    const icon = this.querySelector('svg:last-child');
+                    const isOpen = submenu.classList.toggle('open');
+                    icon.classList.toggle('rotate-180', isOpen);
+                    navAccordions.forEach(otherAccordion => {
+                        if (otherAccordion !== this) {
+                            otherAccordion.nextElementSibling.classList.remove('open');
+                            otherAccordion.querySelector('svg:last-child').classList.remove('rotate-180');
+                        }
+                    });
+                });
+            });
+
+            // --- User Detail Page Logic ---
+            const mockUserDatabase = {
+                'kimchulsoo': {
+                    personal: { name_kr: '김철수', name_en: 'Kim Chul Soo', dob: '1998-03-15', gender: '남성', email: 'chulsoo.kim@email.com', phone: '+82-10-1234-5678' },
+                    account: { joined: '2024-03-01', last_login: '2025-07-18 09:30', source: '학교 추천', status: '활성' },
+                    academic: { university: '서울대학교', department: '기계공학부', student_id: '2024-12345', degree: '석사 과정' },
+                    visa: { type: 'D-2 비자', passport_no: 'P123456789', arc_no: '980315-1234567' },
+                    services: [
+                        { 
+                            id: 'SVC-2403-001', type: '신규 외국인등록증', date: '2024-03-05', status: '발급 완료', payment: '완료',
+                            documents: [
+                                { type: '사증', status: '완료', link: 'ocr-check.html?studentId=kimchulsoo&type=visa' },
+                                { type: '여권', status: '완료', link: 'ocr-check.html?studentId=kimchulsoo&type=passport' }
+                            ]
+                        },
+                        { 
+                            id: 'SVC-2502-005', type: '체류기간 연장', date: '2025-02-20', status: '검토 중', payment: '완료',
+                            documents: [
+                                { type: '거주지 서류', status: '검토 중', link: 'residence-review.html?studentId=kimchulsoo' },
+                                { type: '재학증명서', status: '보완 필요', link: 'ocr-check.html?studentId=kimchulsoo&type=cert' }
+                            ]
+                        }
+                    ],
+                    qna: [
+                        { id: 'QNA-001', title: '서류 보완은 어떻게 하나요?', inquiry_date: '2025-02-21', response_date: '2025-02-21', type: '서비스 문의', status: '답변 완료' }
+                    ]
+                }
+            };
+
+            function getStatusBadge(status) {
+                switch (status) {
+                    case '발급 완료': case '완료': return 'bg-green-100 text-green-800';
+                    case '검토 중': return 'bg-blue-100 text-blue-800';
+                    case '보완 필요': return 'bg-orange-100 text-orange-800';
+                    case '검토 대기': return 'bg-yellow-100 text-yellow-800';
+                    case '취소': return 'bg-red-100 text-red-800';
+                    case '답변 완료': return 'bg-blue-100 text-blue-800';
+                    case '답변 대기': return 'bg-slate-100 text-slate-800';
+                    case '활성': return 'bg-green-100 text-green-800';
+                    default: return 'bg-slate-100 text-slate-800';
+                }
+            }
+
+            function populateUserInfo(userId) {
+                const user = mockUserDatabase[userId];
+                if (!user) {
+                    document.querySelector('main').innerHTML = '<p>사용자 정보를 찾을 수 없습니다.</p>';
+                    return;
+                }
+
+                const createDetailRow = (label, value) => `<div class="flex justify-between py-2 border-b border-slate-100"><span class="text-slate-500">${label}</span><p class="font-medium text-slate-800 text-right">${value || '-'}</p></div>`;
+
+                // Populate Combined Info Panel (Left Column)
+                document.getElementById('combined-info-panel').innerHTML = `
+                    <div class="flex items-center mb-4">
+                        <h3 class="text-xl font-bold">${user.personal.name_kr}</h3>
+                        <p class="text-lg text-slate-500 ml-2">${user.personal.name_en}</p>
+                        <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full ml-4 ${getStatusBadge(user.account.status)}">${user.account.status}</span>
+                    </div>
+                    <div class="space-y-2 text-sm text-slate-600">
+                        <p>${user.personal.email}</p>
+                        <p>${user.personal.phone}</p>
+                        <p class="font-semibold">${user.academic.university}</p>
+                        <p class="font-semibold">${user.visa.type}</p>
+                    </div>
+                    <hr class="my-6 border-slate-200">
+                    <div class="space-y-6 text-sm">
+                        <div>
+                            <h4 class="font-bold text-md mb-3">인적 사항</h4>
+                            <div class="space-y-1">
+                                ${createDetailRow('생년월일', user.personal.dob)}
+                                ${createDetailRow('성별', user.personal.gender)}
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-md mb-3">계정 정보</h4>
+                            <div class="space-y-1">
+                                ${createDetailRow('가입일', user.account.joined)}
+                                ${createDetailRow('최근 로그인', user.account.last_login)}
+                                ${createDetailRow('유입 경로', user.account.source)}
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-md mb-3">학적 정보</h4>
+                            <div class="space-y-1">
+                                ${createDetailRow('학번', user.academic.student_id)}
+                                ${createDetailRow('학과/부서', user.academic.department)}
+                                ${createDetailRow('학위 과정', user.academic.degree)}
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-md mb-3">여권/비자 정보</h4>
+                            <div class="space-y-1">
+                                ${createDetailRow('여권 번호', user.visa.passport_no)}
+                                ${createDetailRow('외국인등록증 번호', user.visa.arc_no)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Populate Tabs (Right Column)
+
+                // Services Tab
+                const servicesContainer = document.getElementById('tab-content-services');
+                if (user.services && user.services.length > 0) {
+                     let tableHTML = `<div class="overflow-x-auto"><table class="w-full text-sm text-left text-slate-500"><thead class="text-xs text-slate-700 uppercase bg-slate-50"><tr><th class="p-4">신청 ID</th><th class="p-4">서비스 종류</th><th class="p-4">신청일</th><th class="p-4">상태</th><th class="p-4">결제 여부</th></tr></thead><tbody>`;
+                    user.services.forEach(s => {
+                        tableHTML += `<tr class="border-b"><td class="p-4">${s.id}</td><td class="p-4">${s.type}</td><td class="p-4">${s.date}</td><td class="p-4"><span class="text-xs font-semibold px-2.5 py-0.5 rounded-full ${getStatusBadge(s.status)}">${s.status}</span></td><td class="p-4">${s.payment}</td></tr>`;
+                    });
+                    tableHTML += `</tbody></table></div>`;
+                    servicesContainer.innerHTML = tableHTML;
+                } else {
+                    servicesContainer.innerHTML = '<p class="text-slate-500">신청한 서비스 내역이 없습니다.</p>';
+                }
+
+                // Document Review Tab
+                const reviewContainer = document.getElementById('tab-content-review');
+                if (user.services && user.services.length > 0) {
+                    let reviewHTML = '';
+                    user.services.forEach(service => {
+                        reviewHTML += `
+                            <div class="border rounded-lg mb-4">
+                                <div class="p-4 bg-slate-50 rounded-t-lg">
+                                    <h4 class="font-bold">${service.type}</h4>
+                                    <p class="text-xs text-slate-500">신청 ID: ${service.id}</p>
+                                </div>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-sm text-left text-slate-500">
+                                        <thead class="text-xs text-slate-700 uppercase bg-slate-50">
+                                            <tr><th class="p-4">서류 종류</th><th class="p-4">진행 상태</th><th class="p-4">작업</th></tr>
+                                        </thead>
+                                        <tbody>`;
+                        service.documents.forEach(doc => {
+                            reviewHTML += `<tr class="border-t"><td class="p-4 font-medium">${doc.type}</td><td class="p-4"><span class="text-xs font-semibold px-2.5 py-0.5 rounded-full ${getStatusBadge(doc.status)}">${doc.status}</span></td><td class="p-4"><a href="${doc.link}" class="font-medium text-indigo-600 hover:underline">에디터로 이동</a></td></tr>`;
+                        });
+                        reviewHTML += `</tbody></table></div></div>`;
+                    });
+                    reviewContainer.innerHTML = reviewHTML;
+                } else {
+                    reviewContainer.innerHTML = '<p class="text-slate-500">검토할 서류가 없습니다.</p>';
+                }
+
+
+                // Q&A Tab
+                const qnaContainer = document.getElementById('tab-content-qna');
+                if (user.qna && user.qna.length > 0) {
+                    let tableHTML = `<div class="overflow-x-auto"><table class="w-full text-sm text-left text-slate-500"><thead class="text-xs text-slate-700 uppercase bg-slate-50"><tr><th class="p-4">문의 ID</th><th class="p-4">제목</th><th class="p-4">문의일</th><th class="p-4">답변일</th><th class="p-4">유형</th><th class="p-4">상태</th></tr></thead><tbody>`;
+                    user.qna.forEach(q => {
+                        tableHTML += `<tr class="border-b"><td class="p-4">${q.id}</td><td class="p-4 font-medium text-slate-800">${q.title}</td><td class="p-4">${q.inquiry_date}</td><td class="p-4">${q.response_date || '-'}</td><td class="p-4">${q.type}</td><td class="p-4"><span class="text-xs font-semibold px-2.5 py-0.5 rounded-full ${getStatusBadge(q.status)}">${q.status}</span></td></tr>`;
+                    });
+                    tableHTML += `</tbody></table></div>`;
+                    qnaContainer.innerHTML = tableHTML;
+                } else {
+                    qnaContainer.innerHTML = '<p class="text-slate-500">1:1 문의 내역이 없습니다.</p>';
+                }
+            }
+
+            // --- Default to Kim Chul Soo for prototype ---
+            populateUserInfo('kimchulsoo');
+
+            // Tab switching logic
+            const tabs = document.querySelectorAll('.tab-btn');
+            const panels = document.querySelectorAll('.tab-panel');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => {
+                        t.classList.remove('text-indigo-600', 'border-indigo-500');
+                        t.classList.add('text-slate-500', 'border-transparent');
+                    });
+                    tab.classList.add('text-indigo-600', 'border-indigo-500');
+                    tab.classList.remove('text-slate-500', 'border-transparent');
+
+                    panels.forEach(p => p.classList.add('hidden'));
+                    
+                    const targetPanelId = `tab-content-${tab.dataset.tab}`;
+                    const targetPanel = document.getElementById(targetPanelId);
+                    if (targetPanel) {
+                        targetPanel.classList.remove('hidden');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
