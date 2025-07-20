@@ -32,7 +32,7 @@
             <nav class="flex-1 px-4 py-4 overflow-y-auto">
                 <ul class="space-y-1">
                     <li>
-                        <a href="main.html" data-page="home" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg">
+                        <a href="index.html" data-page="home" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium text-slate-700 rounded-lg">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                             홈
                         </a>
@@ -94,12 +94,11 @@
                 <!-- Filters -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-6">
                     <input type="text" placeholder="이름" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                
-                    <input type="date" placeholder="기간" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-500">
                     <select class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"><option>국적 전체</option><option>중국</option><option>베트남</option><option>미국</option></select>
                     <select class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"><option>서비스 유형 전체</option><option>신규</option><option>연장</option></select>
                     <select class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"><option>대학교 전체</option><option>한국대학교</option><option>연세대학교</option></select>
                     <select class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"><option>사증 전체</option><option>D-2</option><option>D-4</option></select>
+                    <select class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"><option>부처</option><option>어학당</option><option>학부</option></select>
                     <button class="w-full bg-indigo-600 text-white px-3 py-2 rounded-md hover:bg-indigo-700">검색</button>
                 </div>
                 <!-- User List Table -->
@@ -112,6 +111,7 @@
                                 <th class="p-4">여권 번호</th>
                                 <th class="p-4">국적</th>
                                 <th class="p-4">대학교</th>
+                                <th class="p-4">부처</th>
                                 <th class="p-4">사증</th>
                                 <th class="p-4"></th>
                             </tr>
@@ -123,6 +123,7 @@
                                 <td class="p-4">M12345678</td>
                                 <td class="p-4">중국</td>
                                 <td class="p-4">한국대학교</td>
+                                <td class="p-4">부처</td>
                                 <td class="p-4">D-2</td>
                                 <td class="p-4 text-right"></td>
                             </tr>
@@ -132,6 +133,7 @@
                                 <td class="p-4">M87654321</td>
                                 <td class="p-4">베트남</td>
                                 <td class="p-4">연세대학교</td>
+                                <td class="p-4">부처</td>
                                 <td class="p-4">D-4</td>
                                 <td class="p-4 text-right"></td>
                             </tr>
@@ -141,6 +143,7 @@
                                 <td class="p-4">A1B23C456</td>
                                 <td class="p-4">미국</td>
                                 <td class="p-4">고려대학교</td>
+                                <td class="p-4">부처</td>
                                 <td class="p-4">D-2</td>
                                 <td class="p-4 text-right"></td>
                             </tr>
