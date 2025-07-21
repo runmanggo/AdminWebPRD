@@ -307,11 +307,123 @@
                         </div>
                     </div>
                     <div>
-                        <h4 class="font-semibold mb-2">학교에서 제출 서류</h4>
-                        <div class="space-y-2 text-sm" id="condition-school-docs">
-                            <label class="flex items-center"><input type="checkbox" value="재학 증명서" class="h-4 w-4 rounded"> <span class="ml-2">재학 증명서</span></label>
-                            <label class="flex items-center"><input type="checkbox" value="기숙사 증명서류" class="h-4 w-4 rounded"> <span class="ml-2">기숙사 증명서류</span></label>
-                            <label class="flex items-center"><input type="checkbox" value="해당 없음" class="h-4 w-4 rounded"> <span class="ml-2">해당 없음</span></label>
+                        <h4 class="font-semibold mb-2">필수 제출 서류 (앱을 통한 학생 제출)</h4>
+                        <div class="space-y-2 text-sm bg-slate-50 p-3 rounded-md">
+                            <div class="flex items-center text-slate-600">
+                                <svg class="w-4 h-4 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span>여권</span>
+                            </div>
+                            <div class="flex items-center text-slate-600">
+                                <svg class="w-4 h-4 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span>사증</span>
+                            </div>
+                            <div class="flex items-center text-slate-600">
+                                <svg class="w-4 h-4 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span>서명</span>
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 mr-2 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-slate-600">체류지 서류</span>
+                                <div class="ml-auto">
+                                    <label class="flex items-center text-xs">
+                                        <input type="checkbox" id="school-submit-residence" class="h-3 w-3 rounded mr-1">
+                                        <span class="text-blue-600">학교 제출</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-2">추가 서류 설정</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-sm font-medium text-slate-700 block mb-2">학교에서 제출할 추가 서류</label>
+                                <div class="relative">
+                                    <button type="button" id="school-docs-dropdown-btn" class="w-full px-3 py-2 text-left border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                        <span id="school-docs-selected-text">선택된 서류가 없습니다</span>
+                                        <svg class="w-4 h-4 float-right mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </button>
+                                    <div id="school-docs-dropdown" class="absolute z-10 w-full mt-1 bg-white border border-slate-300 rounded-md shadow-lg hidden max-h-60 overflow-y-auto">
+                                        <div class="p-2 space-y-1">
+                                            <label class="flex items-center p-2 hover:bg-slate-50 rounded cursor-pointer">
+                                                <input type="checkbox" value="재학 증명서" class="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500">
+                                                <span class="ml-2 text-sm">재학 증명서</span>
+                                            </label>
+                                            <label class="flex items-center p-2 hover:bg-slate-50 rounded cursor-pointer">
+                                                <input type="checkbox" value="기숙사 증명서류" class="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500">
+                                                <span class="ml-2 text-sm">기숙사 증명서류</span>
+                                            </label>
+                                            <label class="flex items-center p-2 hover:bg-slate-50 rounded cursor-pointer">
+                                                <input type="checkbox" value="성적 증명서" class="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500">
+                                                <span class="ml-2 text-sm">성적 증명서</span>
+                                            </label>
+                                            <label class="flex items-center p-2 hover:bg-slate-50 rounded cursor-pointer">
+                                                <input type="checkbox" value="출석 증명서" class="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500">
+                                                <span class="ml-2 text-sm">출석 증명서</span>
+                                            </label>
+                                            <label class="flex items-center p-2 hover:bg-slate-50 rounded cursor-pointer">
+                                                <input type="checkbox" value="장학금 증명서" class="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500">
+                                                <span class="ml-2 text-sm">장학금 증명서</span>
+                                            </label>
+                                            <label class="flex items-center p-2 hover:bg-slate-50 rounded cursor-pointer">
+                                                <input type="checkbox" value="등록금 납부 증명서" class="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500">
+                                                <span class="ml-2 text-sm">등록금 납부 증명서</span>
+                                            </label>
+                                            <label class="flex items-center p-2 hover:bg-slate-50 rounded cursor-pointer">
+                                                <input type="checkbox" value="기타" class="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500">
+                                                <span class="ml-2 text-sm">기타</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="school-docs-selected-tags" class="mt-2 flex flex-wrap gap-2"></div>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-slate-700 block mb-2">학생에게 요청할 추가 서류</label>
+                                <div class="relative">
+                                    <button type="button" id="student-docs-dropdown-btn" class="w-full px-3 py-2 text-left border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                        <span id="student-docs-selected-text">선택된 서류가 없습니다</span>
+                                        <svg class="w-4 h-4 float-right mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </button>
+                                    <div id="student-docs-dropdown" class="absolute z-10 w-full mt-1 bg-white border border-slate-300 rounded-md shadow-lg hidden max-h-60 overflow-y-auto">
+                                        <div class="p-2 space-y-1">
+                                            <label class="flex items-center p-2 hover:bg-slate-50 rounded cursor-pointer">
+                                                <input type="checkbox" value="사진" class="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500">
+                                                <span class="ml-2 text-sm">사진</span>
+                                            </label>
+                                            <label class="flex items-center p-2 hover:bg-slate-50 rounded cursor-pointer">
+                                                <input type="checkbox" value="은행 통장 사본" class="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500">
+                                                <span class="ml-2 text-sm">은행 통장 사본</span>
+                                            </label>
+                                            <label class="flex items-center p-2 hover:bg-slate-50 rounded cursor-pointer">
+                                                <input type="checkbox" value="보험 증명서" class="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500">
+                                                <span class="ml-2 text-sm">보험 증명서</span>
+                                            </label>
+                                            <label class="flex items-center p-2 hover:bg-slate-50 rounded cursor-pointer">
+                                                <input type="checkbox" value="의료 검진서" class="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500">
+                                                <span class="ml-2 text-sm">의료 검진서</span>
+                                            </label>
+                                            <label class="flex items-center p-2 hover:bg-slate-50 rounded cursor-pointer">
+                                                <input type="checkbox" value="기타" class="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500">
+                                                <span class="ml-2 text-sm">기타</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="student-docs-selected-tags" class="mt-2 flex flex-wrap gap-2"></div>
+                            </div>
                         </div>
                     </div>
                     <div>
@@ -361,7 +473,10 @@
                 historyContainer.innerHTML = client.history.map((item) => {
                     let details = '';
                     if (item.action.includes('조건')) {
-                        details = `학기: ${item.data.semesterName}, 수수료: ${item.data.fee.toLocaleString()}원`;
+                        const schoolDocs = item.data.schoolAdditionalDocs?.length > 0 ? `, 학교서류: ${item.data.schoolAdditionalDocs.join(', ')}` : '';
+                        const studentDocs = item.data.studentAdditionalDocs?.length > 0 ? `, 학생서류: ${item.data.studentAdditionalDocs.join(', ')}` : '';
+                        const residenceInfo = item.data.residenceDocSchoolSubmit ? ', 체류지서류(학교제출)' : '';
+                        details = `학기: ${item.data.semesterName}, 수수료: ${item.data.fee.toLocaleString()}원${schoolDocs}${studentDocs}${residenceInfo}`;
                     } else if (item.action.includes('일정')) {
                         details = `신청 시작: ${new Date(item.data.appStartDate).toLocaleString()}`;
                     }
@@ -385,6 +500,22 @@
             populateClientInfo(currentClientId);
             populateTabs(currentClientId);
 
+            // Initialize multi-select dropdowns
+            initializeMultiSelectDropdown(
+                'school-docs-dropdown-btn',
+                'school-docs-dropdown',
+                'school-docs-selected-text',
+                'school-docs-selected-tags',
+                'input[type="checkbox"]'
+            );
+            initializeMultiSelectDropdown(
+                'student-docs-dropdown-btn',
+                'student-docs-dropdown',
+                'student-docs-selected-text',
+                'student-docs-selected-tags',
+                'input[type="checkbox"]'
+            );
+
             // --- Tab switching logic ---
             const tabs = document.querySelectorAll('.tab-btn');
             const panels = document.querySelectorAll('.tab-panel');
@@ -402,6 +533,79 @@
                 });
             });
 
+            // --- Multi-Select Dropdown Logic ---
+            function initializeMultiSelectDropdown(dropdownBtnId, dropdownId, selectedTextId, selectedTagsId, checkboxesSelector) {
+                const dropdownBtn = document.getElementById(dropdownBtnId);
+                const dropdown = document.getElementById(dropdownId);
+                const selectedText = document.getElementById(selectedTextId);
+                const selectedTags = document.getElementById(selectedTagsId);
+                const checkboxes = dropdown.querySelectorAll(checkboxesSelector);
+
+                // Toggle dropdown
+                dropdownBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    dropdown.classList.toggle('hidden');
+                    const icon = dropdownBtn.querySelector('svg');
+                    icon.style.transform = dropdown.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!dropdown.contains(e.target) && !dropdownBtn.contains(e.target)) {
+                        dropdown.classList.add('hidden');
+                        const icon = dropdownBtn.querySelector('svg');
+                        icon.style.transform = 'rotate(0deg)';
+                    }
+                });
+
+                // Handle checkbox changes
+                checkboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', updateSelectedItems);
+                });
+
+                function updateSelectedItems() {
+                    const selectedItems = Array.from(checkboxes)
+                        .filter(cb => cb.checked)
+                        .map(cb => cb.value);
+
+                    // Update button text
+                    if (selectedItems.length === 0) {
+                        selectedText.textContent = '선택된 서류가 없습니다';
+                        selectedText.className = 'text-slate-500';
+                    } else if (selectedItems.length === 1) {
+                        selectedText.textContent = selectedItems[0];
+                        selectedText.className = 'text-slate-900';
+                    } else {
+                        selectedText.textContent = `${selectedItems[0]} 외 ${selectedItems.length - 1}개`;
+                        selectedText.className = 'text-slate-900';
+                    }
+
+                    // Update tags
+                    selectedTags.innerHTML = selectedItems.map(item => `
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                            ${item}
+                            <button type="button" class="ml-1 text-indigo-600 hover:text-indigo-800" onclick="removeTag('${item}', '${checkboxesSelector}')">
+                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                </svg>
+                            </button>
+                        </span>
+                    `).join('');
+                }
+
+                // Initialize
+                updateSelectedItems();
+            }
+
+            // Global function for removing tags
+            window.removeTag = function(tagValue, checkboxesSelector) {
+                const checkbox = document.querySelector(`${checkboxesSelector}[value="${tagValue}"]`);
+                if (checkbox) {
+                    checkbox.checked = false;
+                    checkbox.dispatchEvent(new Event('change'));
+                }
+            };
+
             // --- Fee Validation & Save Logic ---
             const conditionFeeInput = document.getElementById('condition-fee');
             const conditionSaveBtn = document.getElementById('condition-save-btn');
@@ -410,7 +614,10 @@
                     conditionSaveBtn.disabled = conditionFeeInput.value.trim() === '';
                 });
                 conditionSaveBtn.addEventListener('click', () => {
-                    const checkedDocs = Array.from(document.querySelectorAll('#condition-school-docs input:checked')).map(cb => cb.value);
+                    const schoolSubmitResidence = document.getElementById('school-submit-residence').checked;
+                    const schoolAdditionalDocs = Array.from(document.querySelectorAll('#school-docs-dropdown input:checked')).map(cb => cb.value);
+                    const studentAdditionalDocs = Array.from(document.querySelectorAll('#student-docs-dropdown input:checked')).map(cb => cb.value);
+                    
                     const newHistory = {
                         id: mockClientData[currentClientId].history.length + 1,
                         date: new Date().toISOString().split('T')[0],
@@ -418,9 +625,12 @@
                         action: '조건 설정 저장',
                         data: {
                             semesterName: document.getElementById('condition-semester-name').value,
-                            semesterStart: '', // Add date inputs if needed
-                            semesterEnd: '',
-                            schoolDocs: checkedDocs,
+                            semesterStart: document.getElementById('condition-semester-start').value,
+                            semesterEnd: document.getElementById('condition-semester-end').value,
+                            requiredDocs: ['여권', '사증', '서명'],
+                            residenceDocSchoolSubmit: schoolSubmitResidence,
+                            schoolAdditionalDocs: schoolAdditionalDocs,
+                            studentAdditionalDocs: studentAdditionalDocs,
                             fee: document.getElementById('condition-fee').value,
                             memo: document.getElementById('condition-memo').value
                         }
@@ -461,9 +671,32 @@
                 if (historyEntry.action.includes('조건')) {
                     modalContent.innerHTML = document.getElementById('tab-content-condition').innerHTML;
                     // Populate with history data
-                    modalContent.querySelector('input[type="text"]').value = historyEntry.data.semesterName;
-                    modalContent.querySelector('input[type="number"]').value = historyEntry.data.fee;
-                    modalContent.querySelector('textarea').value = historyEntry.data.memo;
+                    modalContent.querySelector('#condition-semester-name').value = historyEntry.data.semesterName || '';
+                    modalContent.querySelector('#condition-semester-start').value = historyEntry.data.semesterStart || '';
+                    modalContent.querySelector('#condition-semester-end').value = historyEntry.data.semesterEnd || '';
+                    modalContent.querySelector('#condition-fee').value = historyEntry.data.fee || '';
+                    modalContent.querySelector('#condition-memo').value = historyEntry.data.memo || '';
+                    
+                    // Populate checkboxes
+                    if (historyEntry.data.residenceDocSchoolSubmit) {
+                        modalContent.querySelector('#school-submit-residence').checked = true;
+                    }
+                    
+                    // Populate school additional docs
+                    if (historyEntry.data.schoolAdditionalDocs) {
+                        historyEntry.data.schoolAdditionalDocs.forEach(doc => {
+                            const checkbox = modalContent.querySelector(`#school-docs-dropdown input[value="${doc}"]`);
+                            if (checkbox) checkbox.checked = true;
+                        });
+                    }
+                    
+                    // Populate student additional docs
+                    if (historyEntry.data.studentAdditionalDocs) {
+                        historyEntry.data.studentAdditionalDocs.forEach(doc => {
+                            const checkbox = modalContent.querySelector(`#student-docs-dropdown input[value="${doc}"]`);
+                            if (checkbox) checkbox.checked = true;
+                        });
+                    }
                 } else if (historyEntry.action.includes('일정')) {
                     modalContent.innerHTML = document.getElementById('tab-content-schedule').innerHTML;
                      // Populate with history data
@@ -474,12 +707,27 @@
                 document.getElementById('history-edit-modal').classList.remove('hidden');
                 
                 document.getElementById('history-modal-save-btn').onclick = () => {
-                     const newHistory = {
+                    const modalContent = document.getElementById('history-modal-content');
+                    const schoolSubmitResidence = modalContent.querySelector('#school-submit-residence')?.checked || false;
+                    const schoolAdditionalDocs = Array.from(modalContent.querySelectorAll('#school-docs-dropdown input:checked')).map(cb => cb.value);
+                    const studentAdditionalDocs = Array.from(modalContent.querySelectorAll('#student-docs-dropdown input:checked')).map(cb => cb.value);
+                    
+                    const newHistory = {
                         id: mockClientData[currentClientId].history.length + 1,
                         date: new Date().toISOString().split('T')[0],
                         editor: 'currentUser',
                         action: `${historyEntry.action} (수정됨)`,
-                        data: {} // Repopulate data from modal form
+                        data: {
+                            semesterName: modalContent.querySelector('#condition-semester-name')?.value || '',
+                            semesterStart: modalContent.querySelector('#condition-semester-start')?.value || '',
+                            semesterEnd: modalContent.querySelector('#condition-semester-end')?.value || '',
+                            requiredDocs: ['여권', '사증', '서명'],
+                            residenceDocSchoolSubmit: schoolSubmitResidence,
+                            schoolAdditionalDocs: schoolAdditionalDocs,
+                            studentAdditionalDocs: studentAdditionalDocs,
+                            fee: modalContent.querySelector('#condition-fee')?.value || '',
+                            memo: modalContent.querySelector('#condition-memo')?.value || ''
+                        }
                     };
                     mockClientData[currentClientId].history.push(newHistory);
                     renderHistoryTab(currentClientId);
