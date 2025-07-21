@@ -19,22 +19,27 @@
         ::-webkit-scrollbar-thumb:hover { background: #8892a1; }
         .submenu { display: none; overflow: hidden; transition: max-height 0.3s ease-in-out; max-height: 0; }
         .submenu.open { display: block; max-height: 500px; }
-        .student-list-panel {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-in-out;
-        }
         .summary-card {
             cursor: pointer;
             transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
         .summary-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 12px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
         .summary-card.active {
             border: 2px solid #4f46e5;
-            transform: translateY(-4px);
+            transform: translateY(-2px);
+        }
+        .task-tab {
+            transition: all 0.2s ease-in-out;
+        }
+        .task-tab.active {
+            background-color: #4f46e5;
+            color: white;
+        }
+        .task-tab:hover:not(.active) {
+            background-color: #e0e7ff;
         }
     </style>
 </head>
@@ -111,23 +116,38 @@
                 <a href="./학생전체보기.html" class="px-4 py-2 text-sm font-medium text-white bg-slate-600 border rounded-md hover:bg-slate-700">학생별 전체 진행 상황 보기</a>
             </div>
             
-            <div class="bg-white p-6 rounded-lg shadow-sm">
-                <!-- Summary and Filter -->
-                <div class="border-b pb-4 mb-4">
-                    <div class="flex flex-wrap items-center justify-between gap-4">
-                         <h3 id="summary-title" class="text-xl font-bold">전체 현황</h3>
-                         <select id="doc-type-filter" class="rounded-md border-slate-300 shadow-sm text-sm focus:ring-indigo-500 focus:border-indigo-500">
+            <div class="bg-white rounded-lg shadow-sm">
+                <!-- Summary Cards -->
+                <div class="p-6 border-b">
+                    <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                        <h3 id="summary-title" class="text-xl font-bold">전체 현황</h3>
+                        <select id="doc-type-filter" class="rounded-md border-slate-300 shadow-sm text-sm focus:ring-indigo-500 focus:border-indigo-500">
                             <!-- Options will be populated by JS -->
                         </select>
                     </div>
-                    <div id="summary-cards" class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
-                         <!-- Summary cards will be populated here -->
+                    <div id="summary-cards" class="grid grid-cols-2 sm:grid-cols-5 gap-4">
+                        <!-- Summary cards will be populated here -->
                     </div>
                 </div>
 
-                <!-- Task List -->
-                <div id="task-list-container" class="space-y-2">
-                    <!-- Task list will be populated by JS -->
+                <!-- Task Tabs and Content -->
+                <div class="flex flex-col lg:flex-row">
+                    <!-- Task Tabs -->
+                    <div class="lg:w-1/4 border-r border-slate-200">
+                        <div class="p-4">
+                            <h4 class="text-lg font-semibold mb-4">서류 유형</h4>
+                            <div id="task-tabs" class="space-y-2">
+                                <!-- Task tabs will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Task Content -->
+                    <div class="lg:w-3/4">
+                        <div id="task-content" class="p-6">
+                            <!-- Task content will be populated here -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -138,7 +158,14 @@
         document.addEventListener('DOMContentLoaded', function () {
             // --- Navigation Logic ---
             const navAccordions = document.querySelectorAll('.nav-accordion');
-            navAccordions.forEach(accordion => { /* ... existing code ... */ });
+            navAccordions.forEach(accordion => {
+                accordion.addEventListener('click', function() {
+                    const submenu = this.nextElementSibling;
+                    const icon = this.querySelector('svg:last-child');
+                    const isOpen = submenu.classList.toggle('open');
+                    icon.classList.toggle('rotate-180', isOpen);
+                });
+            });
 
             // --- Task Dashboard Logic ---
             const taskListData = [
@@ -149,16 +176,35 @@
             ];
             
             const mockStudentsByDoc = {
-                '사증': [ { id: 'usr001', name: '김민준', status: '검토 대기' }, { id: 'usr002', name: '이서연', status: '보완 검토' }, { id: 'usr003', name: '박도윤', status: '보완 필요' }, { id: 'usr004', name: '최유리', status: '검토 대기' } ],
-                '여권': [ { id: 'usr005', name: '정수진', status: '검토 대기' }, { id: 'usr006', name: '강현우', status: '검토 대기' }, { id: 'usr007', name: '윤지아', status: '보완 필요' } ],
-                '거주지 서류': [ { id: 'usr008', name: '임도현', status: '보완 필요' }, { id: 'usr009', name: '황서아', status: '검토 대기' } ],
-                '재학증명서': [ { id: 'usr010', name: '송은우', status: '보완 검토' }, { id: 'usr011', name: '오지호', status: '검토 대기' } ]
+                '사증': [ 
+                    { id: 'usr001', name: '김민준', status: '검토 대기', university: '서울대학교', major: '컴퓨터공학과' }, 
+                    { id: 'usr002', name: '이서연', status: '보완 검토', university: '연세대학교', major: '경영학과' }, 
+                    { id: 'usr003', name: '박도윤', status: '보완 필요', university: '고려대학교', major: '국제학과' }, 
+                    { id: 'usr004', name: '최유리', status: '검토 대기', university: '성균관대학교', major: '의학과' } 
+                ],
+                '여권': [ 
+                    { id: 'usr005', name: '정수진', status: '검토 대기', university: '서울대학교', major: '법학과' }, 
+                    { id: 'usr006', name: '강현우', status: '검토 대기', university: '연세대학교', major: '경제학과' }, 
+                    { id: 'usr007', name: '윤지아', status: '보완 필요', university: '고려대학교', major: '문학과' } 
+                ],
+                '거주지 서류': [ 
+                    { id: 'usr008', name: '임도현', status: '보완 필요', university: '성균관대학교', major: '공학과' }, 
+                    { id: 'usr009', name: '황서아', status: '검토 대기', university: '서울대학교', major: '의학과' } 
+                ],
+                '재학증명서': [ 
+                    { id: 'usr010', name: '송은우', status: '보완 검토', university: '연세대학교', major: '경영학과' }, 
+                    { id: 'usr011', name: '오지호', status: '검토 대기', university: '고려대학교', major: '국제학과' } 
+                ]
             };
 
             const summaryCardsContainer = document.getElementById('summary-cards');
             const summaryTitle = document.getElementById('summary-title');
-            const taskListContainer = document.getElementById('task-list-container');
+            const taskTabsContainer = document.getElementById('task-tabs');
+            const taskContentContainer = document.getElementById('task-content');
             const docTypeFilter = document.getElementById('doc-type-filter');
+
+            let currentTaskType = '사증';
+            let currentStatusFilter = 'all';
 
             function populateFilter() {
                 docTypeFilter.innerHTML = '<option value="all">서류 전체</option>';
@@ -167,9 +213,154 @@
                 });
             }
 
-            function renderDashboard(docFilter = 'all', statusFilter = 'all') {
+            function renderSummary(data, activeFilter) {
+                summaryCardsContainer.innerHTML = `
+                    <div class="summary-card p-4 rounded-lg bg-slate-50 ${activeFilter === 'all' ? 'active' : ''}" data-status="all">
+                        <p class="text-sm text-slate-500">전체</p>
+                        <p class="font-bold text-2xl">${data.total}</p>
+                    </div>
+                    <div class="summary-card p-4 rounded-lg bg-slate-50 ${activeFilter === '검토 대기' ? 'active' : ''}" data-status="검토 대기">
+                        <p class="text-sm text-slate-500">검토 대기</p>
+                        <p class="font-bold text-2xl">${data.pending}</p>
+                    </div>
+                    <div class="summary-card p-4 rounded-lg bg-slate-50 ${activeFilter === '보완 검토' ? 'active' : ''}" data-status="보완 검토">
+                        <p class="text-sm text-slate-500">보완 검토</p>
+                        <p class="font-bold text-2xl">${data.revision_review}</p>
+                    </div>
+                    <div class="summary-card p-4 rounded-lg bg-slate-50 ${activeFilter === '보완 필요' ? 'active' : ''}" data-status="보완 필요">
+                        <p class="text-sm text-slate-500">보완 필요</p>
+                        <p class="font-bold text-2xl">${data.revision}</p>
+                    </div>
+                    <div class="summary-card p-4 rounded-lg bg-slate-50 ${activeFilter === '검토 완료' ? 'active' : ''}" data-status="검토 완료">
+                        <p class="text-sm text-slate-500">검토 완료</p>
+                        <p class="font-bold text-2xl">${data.completed}</p>
+                    </div>
+                `;
+            }
+
+            function renderTaskTabs() {
+                taskTabsContainer.innerHTML = taskListData.map(task => `
+                    <button class="task-tab w-full text-left p-3 rounded-lg font-medium ${task.type === currentTaskType ? 'active' : 'bg-slate-100'}" data-task="${task.type}">
+                        <div class="flex justify-between items-center">
+                            <span>${task.type}</span>
+                            <span class="text-sm ${task.type === currentTaskType ? 'text-white' : 'text-slate-500'}">${task.pending + task.revision + task.revision_review}</span>
+                        </div>
+                    </button>
+                `).join('');
+            }
+
+            function renderTaskContent() {
+                const task = taskListData.find(t => t.type === currentTaskType);
+                const students = mockStudentsByDoc[currentTaskType] || [];
+                
+                let filteredStudents = students;
+                if (currentStatusFilter !== 'all') {
+                    filteredStudents = students.filter(student => student.status === currentStatusFilter);
+                }
+
+                const toReviewCount = task.pending + task.revision + task.revision_review;
+                
+                let reviewLink = `ocr-check.html?type=${encodeURIComponent(currentTaskType)}`;
+                if (currentTaskType === '여권') {
+                    reviewLink = '서류검토.html';
+                } else if (currentTaskType === '거주지 서류') {
+                    reviewLink = '거주지서류.html';
+                }
+
+                taskContentContainer.innerHTML = `
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h3 class="text-xl font-bold">${currentTaskType}</h3>
+                            <p class="text-slate-500">총 ${task.total}건 중 ${toReviewCount}건 검토 필요</p>
+                        </div>
+                        <a href="${reviewLink}" class="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-md hover:bg-indigo-700">
+                            전체 검토하기 (${toReviewCount}건)
+                        </a>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-slate-50 p-4 rounded-lg text-center">
+                            <p class="text-sm text-slate-500">전체</p>
+                            <p class="font-bold text-xl">${task.total}</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg text-center">
+                            <p class="text-sm text-slate-500">검토 대기</p>
+                            <p class="font-bold text-xl">${task.pending}</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg text-center">
+                            <p class="text-sm text-slate-500">보완 검토</p>
+                            <p class="font-bold text-xl">${task.revision_review}</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg text-center">
+                            <p class="text-sm text-slate-500">보완 필요</p>
+                            <p class="font-bold text-xl">${task.revision}</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border rounded-lg overflow-hidden">
+                        <div class="px-6 py-4 border-b bg-slate-50">
+                            <h4 class="font-semibold">학생 리스트 (${filteredStudents.length}명)</h4>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-slate-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">학생 정보</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">대학교</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">상태</th>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">작업</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-slate-200">
+                                    ${filteredStudents.map(student => {
+                                        let statusColor = 'text-slate-500';
+                                        let statusBg = 'bg-slate-100';
+                                        if(student.status === '보완 검토') {
+                                            statusColor = 'text-purple-700';
+                                            statusBg = 'bg-purple-100';
+                                        } else if(student.status === '보완 필요') {
+                                            statusColor = 'text-red-700';
+                                            statusBg = 'bg-red-100';
+                                        } else if(student.status === '검토 완료') {
+                                            statusColor = 'text-green-700';
+                                            statusBg = 'bg-green-100';
+                                        }
+                                        
+                                        return `
+                                            <tr class="hover:bg-slate-50">
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div>
+                                                        <div class="text-sm font-medium text-slate-900">${student.name}</div>
+                                                        <div class="text-sm text-slate-500">${student.id}</div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="text-sm text-slate-900">${student.university}</div>
+                                                    <div class="text-sm text-slate-500">${student.major}</div>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusBg} ${statusColor}">
+                                                        ${student.status}
+                                                    </span>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                    <a href="ocr-check.html?studentId=${student.id}&type=${encodeURIComponent(currentTaskType)}" class="text-indigo-600 hover:text-indigo-900">
+                                                        검토하기
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        `;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+
+            function updateDashboard() {
                 let dataToShow;
-                if (docFilter === 'all') {
+                if (docTypeFilter.value === 'all') {
                     summaryTitle.textContent = '전체 현황';
                     const totals = taskListData.reduce((acc, curr) => {
                         acc.total += curr.total;
@@ -179,111 +370,41 @@
                         acc.completed += curr.completed;
                         return acc;
                     }, { total: 0, pending: 0, revision_review: 0, revision: 0, completed: 0 });
-                    renderSummary(totals, statusFilter);
-                    dataToShow = taskListData;
+                    renderSummary(totals, currentStatusFilter);
                 } else {
-                    const filteredData = taskListData.find(task => task.type === docFilter);
+                    const filteredData = taskListData.find(task => task.type === docTypeFilter.value);
                     summaryTitle.textContent = `${filteredData.type} 현황`;
-                    renderSummary(filteredData, statusFilter);
-                    dataToShow = [filteredData];
+                    renderSummary(filteredData, currentStatusFilter);
                 }
                 
-                if (statusFilter !== 'all') {
-                    const statusKeyMap = { '검토 대기': 'pending', '보완 검토': 'revision_review', '보완 필요': 'revision', '검토 완료': 'completed' };
-                    const statusKey = statusKeyMap[statusFilter];
-                    dataToShow = dataToShow.filter(task => task[statusKey] > 0);
-                }
-                renderTaskList(dataToShow, statusFilter);
+                renderTaskTabs();
+                renderTaskContent();
             }
 
-            function renderSummary(data, activeFilter) {
-                summaryCardsContainer.innerHTML = `
-                    <div class="summary-card p-4 rounded-lg bg-slate-50 ${activeFilter === 'all' ? 'active' : ''}" data-status="all"><p class="text-sm text-slate-500">전체</p><p class="font-bold text-2xl">${data.total}</p></div>
-                    <div class="summary-card p-4 rounded-lg bg-slate-50 ${activeFilter === '검토 대기' ? 'active' : ''}" data-status="검토 대기"><p class="text-sm text-slate-500">검토 대기</p><p class="font-bold text-2xl">${data.pending}</p></div>
-                    <div class="summary-card p-4 rounded-lg bg-slate-50 ${activeFilter === '보완 검토' ? 'active' : ''}" data-status="보완 검토"><p class="text-sm text-slate-500">보완 검토</p><p class="font-bold text-2xl">${data.revision_review}</p></div>
-                    <div class="summary-card p-4 rounded-lg bg-slate-50 ${activeFilter === '보완 필요' ? 'active' : ''}" data-status="보완 필요"><p class="text-sm text-slate-500">보완 필요</p><p class="font-bold text-2xl">${data.revision}</p></div>
-                    <div class="summary-card p-4 rounded-lg bg-slate-50 ${activeFilter === '검토 완료' ? 'active' : ''} col-span-2 sm:col-span-1"><p class="text-sm text-slate-500">검토 완료</p><p class="font-bold text-2xl">${data.completed}</p></div>
-                `;
-            }
-
-            function renderTaskList(data, statusFilter) {
-                taskListContainer.innerHTML = '';
-                data.forEach(task => {
-                    const toReviewCount = task.pending + task.revision + task.revision_review;
-                    
-                    let studentsForTask = mockStudentsByDoc[task.type] || [];
-                    if (statusFilter !== 'all') {
-                        studentsForTask = studentsForTask.filter(student => student.status === statusFilter);
-                    }
-
-                    const studentListHTML = studentsForTask.map(student => {
-                        let statusColor = 'text-slate-500';
-                        if(student.status === '보완 검토') statusColor = 'text-purple-500';
-                        if(student.status === '보완 필요') statusColor = 'text-red-500';
-                        return `<tr class="border-t"><td class="p-3">${student.name} (${student.id})</td><td class="p-3 ${statusColor}">${student.status}</td><td class="p-3 text-right"><a href="ocr-check.html?studentId=${student.id}&type=${encodeURIComponent(task.type)}" class="text-indigo-600 hover:underline text-xs font-medium">검토하기</a></td></tr>`;
-                    }).join('');
-
-                    let reviewLink = `ocr-check.html?type=${encodeURIComponent(task.type)}`;
-                    if (task.type === '여권') {
-                        reviewLink = '서류검토.html';
-                    } else if (task.type === '거주지 서류') {
-                        reviewLink = '거주지서류.html';
-                    }
-
-                    taskListContainer.innerHTML += `
-                        <div class="bg-white rounded-lg shadow-sm">
-                            <div class="p-4 cursor-pointer task-item-header">
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-                                    <div class="flex items-center gap-2"><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg><h4 class="text-lg font-bold">${task.type}</h4></div>
-                                    <div class="grid grid-cols-5 gap-2 text-center text-sm md:col-span-2">
-                                        <div><p class="text-slate-400">전체</p><p class="font-semibold">${task.total}</p></div>
-                                        <div><p class="text-slate-400">대기</p><p class="font-semibold">${task.pending}</p></div>
-                                        <div><p class="text-slate-400">보완검토</p><p class="font-semibold">${task.revision_review}</p></div>
-                                        <div><p class="text-slate-400">보완필요</p><p class="font-semibold">${task.revision}</p></div>
-                                        <div><p class="text-slate-400">완료</p><p class="font-semibold">${task.completed}</p></div>
-                                    </div>
-                                </div>
-                                <div class="text-right mt-2">
-                                    <a href="${reviewLink}" class="inline-block px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-md hover:bg-indigo-700">전체 검토하기 (${toReviewCount}건)</a>
-                                </div>
-                            </div>
-                            <div class="student-list-panel" style="max-height: 0px;">
-                                <div class="p-4 border-t"><table class="w-full text-sm"><thead class="bg-slate-50"><tr><th class="p-3 text-left font-semibold">학생 정보</th><th class="p-3 text-left font-semibold">상태</th><th class="p-3 text-right font-semibold">작업</th></tr></thead><tbody>${studentListHTML}</tbody></table></div>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-
+            // Event Listeners
             docTypeFilter.addEventListener('change', (e) => {
-                renderDashboard(e.target.value);
+                updateDashboard();
             });
             
             summaryCardsContainer.addEventListener('click', (e) => {
                 const card = e.target.closest('.summary-card');
                 if (card) {
-                    const status = card.dataset.status;
-                    renderDashboard(docTypeFilter.value, status);
+                    currentStatusFilter = card.dataset.status;
+                    updateDashboard();
                 }
             });
             
-            taskListContainer.addEventListener('click', (e) => {
-                const header = e.target.closest('.task-item-header');
-                if (header) {
-                    const panel = header.nextElementSibling;
-                    const icon = header.querySelector('svg');
-                    if (panel.style.maxHeight === '0px') {
-                        panel.style.maxHeight = panel.scrollHeight + "px";
-                        icon.style.transform = 'rotate(90deg)';
-                    } else {
-                        panel.style.maxHeight = '0px';
-                        icon.style.transform = 'rotate(0deg)';
-                    }
+            taskTabsContainer.addEventListener('click', (e) => {
+                const tab = e.target.closest('.task-tab');
+                if (tab) {
+                    currentTaskType = tab.dataset.task;
+                    updateDashboard();
                 }
             });
 
+            // Initialize
             populateFilter();
-            renderDashboard();
+            updateDashboard();
         });
     </script>
 </body>
